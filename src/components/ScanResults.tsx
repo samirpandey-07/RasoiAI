@@ -297,7 +297,7 @@ export const ScanResults: React.FC<ScanResultsProps> = ({
               className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold transition-all shadow-xs disabled:opacity-50"
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-100" />
-              <span>Ask Gemini to Create Recipe</span>
+              <span>Ask RasoiAI to Create Recipe</span>
             </button>
           )}
 

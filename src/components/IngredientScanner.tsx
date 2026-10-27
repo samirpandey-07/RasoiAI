@@ -149,7 +149,7 @@ export const IngredientScanner: React.FC<IngredientScannerProps> = ({ onScanComp
           Scan Your Kitchen Ingredients
         </h1>
         <p className="text-sm text-stone-600">
-          Upload a photo of your crisper drawer, grocery bag, or countertop. Gemini will detect visible ingredients and check them against your recipe matches.
+          Upload a photo of your crisper drawer, grocery bag, or countertop. RasoiAI will detect visible ingredients and check them against your recipe matches.
         </p>
       </div>
 
@@ -177,7 +177,7 @@ export const IngredientScanner: React.FC<IngredientScannerProps> = ({ onScanComp
             {/* Optional Context Notes */}
             <div className="space-y-1.5">
               <label htmlFor="notes" className="block text-xs font-semibold text-stone-700">
-                Optional Context / Notes for Chef Gemini:
+                Optional Context / Notes for Chef RasoiAI:
               </label>
               <input
                 id="notes"
@@ -199,7 +199,7 @@ export const IngredientScanner: React.FC<IngredientScannerProps> = ({ onScanComp
                 {isLoading ? (
                   <>
                     <RefreshCw className="w-4 h-4 animate-spin text-emerald-200" />
-                    <span>Analyzing Ingredients with Gemini...</span>
+                    <span>Analyzing Ingredients with RasoiAI...</span>
                   </>
                 ) : (
                   <>

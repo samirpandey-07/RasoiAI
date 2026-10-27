@@ -1,25 +1,13 @@
 import React, { useState } from 'react';
 import {
   Settings,
-  Database,
-  ShieldCheck,
-  Check,
-  Copy,
-  AlertCircle,
   Download,
   Upload,
   RotateCcw,
-  Key,
-  ExternalLink,
   Sliders,
   CheckCircle2,
 } from 'lucide-react';
 import { InventoryItem, UserPreferences } from '../types';
-import {
-  getSupabaseCredentials,
-  setSupabaseCredentials,
-  testSupabaseConnection,
-} from '../services/supabase';
 
 interface UserSettingsProps {
   preferences: UserPreferences;
@@ -61,19 +49,6 @@ export const UserSettings: React.FC<UserSettingsProps> = ({
   onImportData,
   onResetDemo,
 }) => {
-  // Supabase states
-  const initialCreds = getSupabaseCredentials();
-  const [supabaseUrl, setSupabaseUrl] = useState(initialCreds.url);
-  const [supabaseKey, setSupabaseKey] = useState(initialCreds.key);
-  const [connectionStatus, setConnectionStatus] = useState<{
-    tested: boolean;
-    success: boolean;
-    message: string;
-  } | null>(null);
-  const [testingConnection, setTestingConnection] = useState(false);
-  const [copiedSql, setCopiedSql] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState(false);
-
   // Preference handlers
   const toggleDietary = (item: string) => {
     const current = preferences.dietaryPreferences || [];
@@ -85,26 +60,6 @@ export const UserSettings: React.FC<UserSettingsProps> = ({
     const current = preferences.allergies || [];
     const next = current.includes(item) ? current.filter((i) => i !== item) : [...current, item];
     onUpdatePreferences({ ...preferences, allergies: next });
-  };
-
-  const handleSaveSupabase = () => {
-    setSupabaseCredentials(supabaseUrl, supabaseKey);
-    setSaveSuccess(true);
-    setConnectionStatus(null);
-    setTimeout(() => setSaveSuccess(false), 3000);
-  };
-
-  const handleTestConnection = async () => {
-    setTestingConnection(true);
-    setConnectionStatus(null);
-    setSupabaseCredentials(supabaseUrl, supabaseKey);
-    const result = await testSupabaseConnection();
-    setTestingConnection(false);
-    setConnectionStatus({
-      tested: true,
-      success: result.success,
-      message: result.message,
-    });
   };
 
   // Export JSON
@@ -207,7 +162,7 @@ export const UserSettings: React.FC<UserSettingsProps> = ({
           <h2 className="text-lg font-bold text-stone-800">Allergen Safety Guard</h2>
         </div>
         <p className="text-xs text-stone-500">
-          Chef Gemini will strictly flag and warn you whenever a recipe calls for any of these ingredients.
+          Chef RasoiAI will strictly flag and warn you whenever a recipe calls for any of these ingredients.
         </p>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-2">
@@ -294,105 +249,7 @@ export const UserSettings: React.FC<UserSettingsProps> = ({
         </div>
       </section>
 
-      {/* 4. Supabase Database Configuration */}
-      <section className="bg-white p-6 sm:p-8 rounded-3xl border border-[#E2EBE5] shadow-xs space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Database className="w-5 h-5 text-[#1B4332]" />
-            <h2 className="text-lg font-bold text-stone-800">Supabase PostgreSQL Integration</h2>
-          </div>
-          <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-[#E7EFEA] text-[#1B4332]">
-            Optional Cloud Sync
-          </span>
-        </div>
 
-        <p className="text-xs text-stone-600 leading-relaxed">
-          Smart Kitchen AI works completely offline in local storage by default. To sync inventory and favorites across devices, enter your Supabase project credentials below.
-        </p>
-
-        <div className="space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-stone-700 mb-1">
-              Supabase Project URL
-            </label>
-            <input
-              type="text"
-              value={supabaseUrl}
-              onChange={(e) => setSupabaseUrl(e.target.value)}
-              placeholder="https://xyzcompany.supabase.co"
-              className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-stone-300 font-mono focus:outline-none focus:ring-2 focus:ring-[#1B4332]"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-stone-700 mb-1">
-              Supabase Anon Public API Key
-            </label>
-            <input
-              type="password"
-              value={supabaseKey}
-              onChange={(e) => setSupabaseKey(e.target.value)}
-              placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-              className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-stone-300 font-mono focus:outline-none focus:ring-2 focus:ring-[#1B4332]"
-            />
-          </div>
-
-          {/* Action buttons */}
-          <div className="flex flex-wrap items-center gap-3 pt-1">
-            <button
-              onClick={handleSaveSupabase}
-              className="px-4 py-2.5 rounded-xl bg-[#1B4332] text-white text-xs font-semibold hover:bg-[#143628] transition-colors"
-            >
-              Save Credentials
-            </button>
-
-            <button
-              onClick={handleTestConnection}
-              disabled={testingConnection}
-              className="px-4 py-2.5 rounded-xl border border-stone-300 text-stone-700 text-xs font-semibold hover:bg-stone-50 transition-colors disabled:opacity-50"
-            >
-              {testingConnection ? 'Testing Connection...' : 'Test Connection'}
-            </button>
-
-            <button
-              onClick={handleCopySchema}
-              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-stone-200 text-stone-600 text-xs font-medium hover:bg-stone-50"
-            >
-              <Copy className="w-3.5 h-3.5" />
-              <span>{copiedSql ? 'Schema Info Copied!' : 'View schema.sql notice'}</span>
-            </button>
-          </div>
-
-          {saveSuccess && (
-            <p className="text-xs font-semibold text-emerald-700 flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5" /> Credentials saved successfully.
-            </p>
-          )}
-
-          {/* Connection Test Result */}
-          {connectionStatus && (
-            <div
-              className={`p-4 rounded-xl text-xs flex items-start gap-2.5 ${
-                connectionStatus.success
-                  ? 'bg-emerald-50 border border-emerald-200 text-emerald-900'
-                  : 'bg-amber-50 border border-amber-200 text-amber-900'
-              }`}
-            >
-              {connectionStatus.success ? (
-                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600 mt-0.5" />
-              ) : (
-                <AlertCircle className="w-4 h-4 shrink-0 text-amber-600 mt-0.5" />
-              )}
-              <div>
-                <strong className="block mb-0.5">
-                  {connectionStatus.success ? 'Connection Valid' : 'Configuration Notice'}
-                </strong>
-                <p>{connectionStatus.message}</p>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
 
       {/* 5. Data Backup, Export & Reset */}
       <section className="bg-white p-6 sm:p-8 rounded-3xl border border-[#E2EBE5] shadow-xs space-y-4">

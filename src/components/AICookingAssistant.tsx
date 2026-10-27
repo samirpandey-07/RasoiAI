@@ -153,7 +153,7 @@ Tip: Add the yogurt after removing the pan from high heat and stir continuously.
       {
         id: `welcome_${Date.now()}`,
         sender: 'assistant',
-        text: "Hello! I'm Chef Gemini, your personal kitchen mentor. What culinary question or ingredient dilemma can I help you resolve?",
+        text: "Hello! I'm Chef RasoiAI, your personal kitchen mentor. What culinary question or ingredient dilemma can I help you resolve?",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
     ]);
@@ -171,7 +171,7 @@ Tip: Add the yogurt after removing the pan from high heat and stir continuously.
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="font-extrabold text-stone-900 text-sm">Chef Gemini AI</h3>
+                <h3 className="font-extrabold text-stone-900 text-sm">Chef RasoiAI</h3>
                 <p className="text-[11px] text-stone-500 font-medium">Your personal kitchen mentor</p>
               </div>
             </div>
@@ -219,7 +219,7 @@ Tip: Add the yogurt after removing the pan from high heat and stir continuously.
           {/* Top Bar with Clear Chat */}
           <div className="p-4 px-6 border-b border-[#EBE6DD] flex items-center justify-between">
             <div>
-              <h2 className="font-bold text-stone-900 text-sm">Chef Gemini AI</h2>
+              <h2 className="font-bold text-stone-900 text-sm">Chef RasoiAI</h2>
               <p className="text-[11px] text-stone-500">Live culinary advice tailored to your pantry</p>
             </div>
             <button
@@ -265,7 +265,7 @@ Tip: Add the yogurt after removing the pan from high heat and stir continuously.
                   {/* Bubble */}
                   <div className="flex-1 space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-stone-900">Chef Gemini</span>
+                      <span className="text-xs font-bold text-stone-900">Chef RasoiAI</span>
                       <span className="text-[10px] text-stone-400">{msg.timestamp}</span>
                     </div>
 
@@ -307,7 +307,7 @@ Tip: Add the yogurt after removing the pan from high heat and stir continuously.
                   <div className="w-1.5 h-1.5 rounded-full bg-[#163828] animate-bounce" />
                   <div className="w-1.5 h-1.5 rounded-full bg-[#163828] animate-bounce [animation-delay:0.2s]" />
                   <div className="w-1.5 h-1.5 rounded-full bg-[#163828] animate-bounce [animation-delay:0.4s]" />
-                  <span className="ml-1 text-stone-600">Chef Gemini is thinking...</span>
+                  <span className="ml-1 text-stone-600">Chef RasoiAI is thinking...</span>
                 </div>
               </div>
             )}
@@ -342,7 +342,7 @@ Tip: Add the yogurt after removing the pan from high heat and stir continuously.
                 type="text"
                 value={inputPrompt}
                 onChange={(e) => setInputPrompt(e.target.value)}
-                placeholder="Ask Chef Gemini anything about cooking, ingredients, or recipes..."
+                placeholder="Ask Chef RasoiAI anything about cooking, ingredients, or recipes..."
                 className="flex-1 text-xs sm:text-sm text-stone-800 placeholder-stone-400 bg-transparent focus:outline-none"
               />
 

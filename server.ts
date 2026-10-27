@@ -306,7 +306,7 @@ app.post('/api/gemini/cooking-assistant', async (req, res) => {
       });
     }
 
-    let systemInstruction = `You are Chef Gemini, the executive chef and friendly kitchen mentor behind "Smart Kitchen AI".
+    let systemInstruction = `You are Chef RasoiAI, the executive chef and friendly kitchen mentor behind "RasoiAI".
 You give warm, crisp, practical, and highly actionable culinary guidance.
 Guidelines:
 1. Focus on real kitchen mechanics: heat management, seasoning balance, texture, moisture control, safe food handling.
@@ -484,7 +484,7 @@ app.post('/api/gemini/generate-recipe', async (req, res) => {
     }
 
     const promptText = `
-You are Chef Gemini, master recipe creator for "Smart Kitchen AI".
+You are Chef RasoiAI, master recipe creator for "RasoiAI".
 Craft a complete, mouthwatering, practical culinary recipe based strictly on the user's available ingredients, expiring food items, and preferences.
 
 Input Criteria:

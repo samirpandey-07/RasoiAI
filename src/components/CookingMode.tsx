@@ -377,7 +377,7 @@ export const CookingMode: React.FC<CookingModeProps> = ({ recipe, onExit }) => {
             <div className="flex items-center justify-between pb-3 border-b border-stone-200">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-amber-500" />
-                <h3 className="font-bold text-base text-stone-800">Ask Sous-Chef Gemini</h3>
+                <h3 className="font-bold text-base text-stone-800">Ask Sous-Chef RasoiAI</h3>
               </div>
               <button onClick={() => setShowSousChef(false)} className="p-1 text-stone-400 hover:text-stone-700">
                 <X className="w-5 h-5" />

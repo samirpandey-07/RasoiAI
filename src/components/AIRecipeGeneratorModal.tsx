@@ -83,7 +83,7 @@ export const AIRecipeGeneratorModal: React.FC<AIRecipeGeneratorModalProps> = ({
 
   const handleGenerate = async () => {
     if (selectedIngredients.length === 0) {
-      setErrorMessage('Please select at least 1 ingredient for Chef Gemini to work with.');
+      setErrorMessage('Please select at least 1 ingredient for Chef RasoiAI to work with.');
       return;
     }
 
@@ -132,12 +132,12 @@ export const AIRecipeGeneratorModal: React.FC<AIRecipeGeneratorModalProps> = ({
               <h2 className="text-xl sm:text-2xl font-extrabold text-stone-900 tracking-tight">
                 AI Recipe Studio
               </h2>
-              <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
-                Gemini
+              <span className="text-[10px] font-bold bg-[#DDEAE1] text-[#163828] px-2.5 py-0.5 rounded-full">
+                RasoiAI
               </span>
             </div>
             <p className="text-xs text-stone-500 leading-relaxed">
-              Select your available items. Gemini creates an authentic chef recipe tailored to rescue your expiring food.
+              Select your available items. RasoiAI creates an authentic chef recipe tailored to rescue your expiring food.
             </p>
           </div>
         </div>
@@ -266,7 +266,7 @@ export const AIRecipeGeneratorModal: React.FC<AIRecipeGeneratorModalProps> = ({
               {isLoading ? (
                 <>
                   <RefreshCw className="w-4 h-4 animate-spin text-emerald-200" />
-                  <span>Chef Gemini is creating your recipe...</span>
+                  <span>Chef RasoiAI is creating your recipe...</span>
                 </>
               ) : (
                 <>

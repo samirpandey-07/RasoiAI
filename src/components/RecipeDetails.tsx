@@ -390,7 +390,7 @@ export const RecipeDetails: React.FC<RecipeDetailsProps> = ({
               onClick={() => onAskChef(`Can you recommend tips or substitutions for cooking ${recipe.name}?`)}
               className="w-full text-xs font-semibold py-2 px-3 rounded-xl bg-white border border-[#E2EBE5] text-stone-700 hover:text-[#1B4332] hover:bg-stone-50 transition-colors text-left flex items-center justify-between"
             >
-              <span>Ask Chef Gemini about this recipe</span>
+              <span>Ask Chef RasoiAI about this recipe</span>
               <span>&rarr;</span>
             </button>
           </div>
@@ -512,7 +512,7 @@ export const RecipeDetails: React.FC<RecipeDetailsProps> = ({
               </div>
             ) : (
               <p className="text-xs text-stone-500 py-4">
-                Could not retrieve substitutions. Please ask Chef Gemini directly in chat.
+                Could not retrieve substitutions. Please ask Chef RasoiAI directly in chat.
               </p>
             )}
 

@@ -33,6 +33,7 @@ import { Favorites } from './components/Favorites';
 import { UserSettings } from './components/UserSettings';
 import { AuthModal } from './components/AuthModal';
 import { AIRecipeGeneratorModal } from './components/AIRecipeGeneratorModal';
+import { Footer } from './components/Footer';
 
 export default function App() {
   const [currentView, setCurrentView] = useState<AppView>('landing');
@@ -328,15 +329,8 @@ export default function App() {
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-[#E2EBE5] bg-white py-8 text-center text-xs text-stone-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-2">
-          <p className="font-semibold text-stone-700">Smart Kitchen AI &bull; Food Waste Reduction & Culinary Companion</p>
-          <p className="text-stone-400">
-            Powered by Google Gemini 3.8 Flash Vision & TypeScript Deterministic Matching Engine
-          </p>
-        </div>
-      </footer>
+      {/* Luxury Footer */}
+      <Footer onNavigate={handleNavigate} />
 
       {/* Supabase / Guest Auth Modal */}
       <AuthModal

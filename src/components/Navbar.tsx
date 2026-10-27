@@ -39,7 +39,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'recipes' as AppView, label: 'Recipes', icon: BookOpen },
     { id: 'inventory' as AppView, label: 'My Kitchen', icon: ShoppingBag },
     { id: 'expiry' as AppView, label: 'Expiry', icon: Calendar, hasAlert: expiringCount > 0 },
-    { id: 'assistant' as AppView, label: 'AI Chef', icon: Sparkles },
+    { id: 'assistant' as AppView, label: 'Chef RasoiAI', icon: Sparkles },
     { id: 'favorites' as AppView, label: 'Saved', icon: Heart, badge: favoritesCount > 0 ? favoritesCount : undefined },
   ];
 
@@ -61,7 +61,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="flex flex-col">
               <div className="flex items-center">
                 <span className="font-bold text-lg text-stone-900 tracking-tight">
-                  Smart Kitchen
+                  Rasoi
                 </span>
                 <span className="text-[11px] font-bold bg-[#F5EAD9] text-[#97602D] px-2 py-0.5 rounded-md ml-1.5 uppercase">
                   AI
