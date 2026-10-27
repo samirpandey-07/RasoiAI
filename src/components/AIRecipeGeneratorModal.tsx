@@ -130,7 +130,7 @@ export const AIRecipeGeneratorModal: React.FC<AIRecipeGeneratorModalProps> = ({
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <h2 className="text-xl sm:text-2xl font-extrabold text-stone-900 tracking-tight">
-                AI Recipe Studio
+                Rasoi Recipe Studio
               </h2>
               <span className="text-[10px] font-bold bg-[#DDEAE1] text-[#163828] px-2.5 py-0.5 rounded-full">
                 RasoiAI

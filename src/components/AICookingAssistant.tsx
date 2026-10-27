@@ -10,6 +10,8 @@ import {
   RotateCcw,
   Sparkles,
   Check,
+  Trash2,
+  MessageSquare,
 } from 'lucide-react';
 import { ChatMessage, Recipe, InventoryItem, UserPreferences } from '../types';
 import { askAssistant } from '../services/gemini';
@@ -21,27 +23,34 @@ interface AICookingAssistantProps {
   onSelectRecipe: (recipeId: string) => void;
 }
 
-const CHAT_HISTORY = {
-  Today: [
-    'Substitute for cream',
-    'Use spinach before expiry',
-    'High protein breakfast ideas',
-    'Make pasta without cheese',
+interface ChatSession {
+  id: string;
+  title: string;
+  createdAt: number;
+  messages: ChatMessage[];
+}
+
+const STORAGE_KEY = 'rasoi_chat_sessions_v2';
+
+const CREATE_INITIAL_SESSION = (): ChatSession => ({
+  id: `session_${Date.now()}`,
+  title: 'Culinary Inquiry',
+  createdAt: Date.now(),
+  messages: [
+    {
+      id: `welcome_${Date.now()}`,
+      sender: 'assistant',
+      text: "Hello! I'm Chef RasoiAI, your personal kitchen mentor. What culinary question or ingredient dilemma can I help you resolve?",
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    },
   ],
-  Yesterday: [
-    'What can I cook with paneer?',
-    'Low calorie dinner options',
-  ],
-  'This Week': [
-    'Meal prep for the week',
-  ],
-};
+});
 
 const SUGGESTED_CHIPS = [
-  'Suggest a full pasta recipe',
-  'Make it high-protein',
-  'What other substitutes work?',
-  'Show step-by-step',
+  'What can I cook with ingredients expiring soon?',
+  'Suggest a quick 20-min dinner recipe',
+  'Healthy high-protein meal idea',
+  'How do I balance overly spicy curry?',
 ];
 
 export const AICookingAssistant: React.FC<AICookingAssistantProps> = ({
@@ -49,46 +58,76 @@ export const AICookingAssistant: React.FC<AICookingAssistantProps> = ({
   activeRecipe,
   preferences,
 }) => {
-  const [activeChatTitle, setActiveChatTitle] = useState('Substitute for cream');
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: 'msg_1',
-      sender: 'user',
-      text: 'How do I substitute heavy cream with yogurt in pasta?',
-      timestamp: '02:01 PM',
-    },
-    {
-      id: 'msg_2',
-      sender: 'assistant',
-      text: `You can definitely substitute heavy cream with yogurt in pasta! Here's how to do it while keeping the sauce creamy and delicious:
+  // Load real sessions from localStorage
+  const [sessions, setSessions] = useState<ChatSession[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch {
+      // fallback to initial
+    }
+    return [CREATE_INITIAL_SESSION()];
+  });
 
-1. Use plain, unsweetened yogurt (preferably Greek yogurt).
-2. Add it at low heat to prevent curdling.
-3. Mix with a little pasta water to get a smooth, creamy texture.
-4. You can also add a bit of olive oil or butter for richness.
-5. Works great with garlic, herbs, and parmesan.
-
-Tip: Add the yogurt after removing the pan from high heat and stir continuously.`,
-      timestamp: '02:01 PM',
-    },
-  ]);
-
+  const [activeSessionId, setActiveSessionId] = useState<string>(() => sessions[0]?.id || 'default');
   const [inputPrompt, setInputPrompt] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  // Messages container ref for strictly internal scrolling (no window jump)
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
+  // Active session
+  const currentSession = sessions.find((s) => s.id === activeSessionId) || sessions[0];
+  const messages = currentSession?.messages || [];
+
+  // Save sessions to localStorage whenever they change
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isLoading]);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+    } catch (e) {
+      console.error('Failed to save sessions to localStorage:', e);
+    }
+  }, [sessions]);
+
+  // Keep internal messages scrolled to bottom without moving the page window
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+  }, [messages.length, isLoading]);
+
+  const handleNewChat = () => {
+    const newSession = CREATE_INITIAL_SESSION();
+    setSessions((prev) => [newSession, ...prev]);
+    setActiveSessionId(newSession.id);
+  };
+
+  const handleDeleteSession = (e: React.MouseEvent, sessionId: string) => {
+    e.stopPropagation();
+    const remaining = sessions.filter((s) => s.id !== sessionId);
+    if (remaining.length === 0) {
+      const fresh = [CREATE_INITIAL_SESSION()];
+      setSessions(fresh);
+      setActiveSessionId(fresh[0].id);
+    } else {
+      setSessions(remaining);
+      if (activeSessionId === sessionId) {
+        setActiveSessionId(remaining[0].id);
+      }
+    }
+  };
 
   const handleSendMessage = async (textToSend?: string) => {
     const query = textToSend || inputPrompt;
     if (!query.trim() || isLoading) return;
 
     const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
     const userMessage: ChatMessage = {
       id: `user_${Date.now()}`,
       sender: 'user',
@@ -96,7 +135,28 @@ Tip: Add the yogurt after removing the pan from high heat and stir continuously.
       timestamp: timeStr,
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    // Determine updated session title if it's the first user question
+    const isFirstUserMsg = !messages.some((m) => m.sender === 'user');
+    const newTitle = isFirstUserMsg
+      ? query.trim().length > 30
+        ? query.trim().slice(0, 30) + '...'
+        : query.trim()
+      : currentSession.title;
+
+    // Update active session with user message
+    setSessions((prev) =>
+      prev.map((s) => {
+        if (s.id === currentSession.id) {
+          return {
+            ...s,
+            title: newTitle,
+            messages: [...s.messages, userMessage],
+          };
+        }
+        return s;
+      })
+    );
+
     setInputPrompt('');
     setIsLoading(true);
 
@@ -106,12 +166,14 @@ Tip: Add the yogurt after removing the pan from high heat and stir continuously.
     }));
 
     const result = await askAssistant(query, history, {
-      activeRecipe: activeRecipe ? {
-        name: activeRecipe.name,
-        servings: activeRecipe.servings,
-        totalMinutes: activeRecipe.totalMinutes,
-        instructions: activeRecipe.instructions,
-      } : undefined,
+      activeRecipe: activeRecipe
+        ? {
+            name: activeRecipe.name,
+            servings: activeRecipe.servings,
+            totalMinutes: activeRecipe.totalMinutes,
+            instructions: activeRecipe.instructions,
+          }
+        : undefined,
       inventory: inventory.map((i) => i.name),
       dietaryPreferences: preferences.dietaryPreferences,
       allergies: preferences.allergies,
@@ -119,27 +181,29 @@ Tip: Add the yogurt after removing the pan from high heat and stir continuously.
 
     setIsLoading(false);
 
-    if (result.success && result.reply) {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `chef_${Date.now()}`,
-          sender: 'assistant',
-          text: result.reply!,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        },
-      ]);
-    } else {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `chef_${Date.now()}`,
-          sender: 'assistant',
-          text: result.error || 'Sorry, I ran into a network hiccup. Please ask again!',
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        },
-      ]);
-    }
+    const replyText =
+      result.success && result.reply
+        ? result.reply
+        : result.error || 'Sorry, I ran into an error. Please try asking again!';
+
+    const assistantMessage: ChatMessage = {
+      id: `chef_${Date.now()}`,
+      sender: 'assistant',
+      text: replyText,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    setSessions((prev) =>
+      prev.map((s) => {
+        if (s.id === currentSession.id) {
+          return {
+            ...s,
+            messages: [...s.messages, assistantMessage],
+          };
+        }
+        return s;
+      })
+    );
   };
 
   const handleCopy = (text: string, id: string) => {
@@ -148,26 +212,31 @@ Tip: Add the yogurt after removing the pan from high heat and stir continuously.
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const handleClearChat = () => {
-    setMessages([
-      {
-        id: `welcome_${Date.now()}`,
-        sender: 'assistant',
-        text: "Hello! I'm Chef RasoiAI, your personal kitchen mentor. What culinary question or ingredient dilemma can I help you resolve?",
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      },
-    ]);
+  const handleClearCurrentChat = () => {
+    const welcome = CREATE_INITIAL_SESSION().messages[0];
+    setSessions((prev) =>
+      prev.map((s) => {
+        if (s.id === currentSession.id) {
+          return {
+            ...s,
+            title: 'New Conversation',
+            messages: [welcome],
+          };
+        }
+        return s;
+      })
+    );
   };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 animate-in fade-in duration-200">
       <div className="bg-white rounded-3xl border border-[#EBE6DD] overflow-hidden shadow-[0_2px_15px_rgba(0,0,0,0.03)] flex flex-col md:flex-row h-[700px]">
-        {/* Left Sidebar */}
+        {/* Left Sidebar: Real Saved Chats */}
         <div className="w-full md:w-72 lg:w-80 bg-[#FAF7F2] border-r border-[#EBE6DD] p-5 flex flex-col justify-between shrink-0">
-          <div className="space-y-5">
+          <div className="space-y-5 flex-1 flex flex-col overflow-hidden">
             {/* Chef Profile Header */}
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#E67E22] text-white flex items-center justify-center font-bold text-sm shadow-xs shrink-0">
+              <div className="w-10 h-10 rounded-2xl bg-[#E67E22] text-white flex items-center justify-center font-bold text-sm shadow-xs shrink-0">
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
               <div>
@@ -178,38 +247,62 @@ Tip: Add the yogurt after removing the pan from high heat and stir continuously.
 
             {/* + New Chat Button */}
             <button
-              onClick={handleClearChat}
-              className="w-full flex items-center justify-center gap-2 bg-[#163828] hover:bg-[#122D20] text-white py-2.5 rounded-full text-xs font-semibold shadow-xs transition-colors"
+              onClick={handleNewChat}
+              className="w-full flex items-center justify-center gap-2 bg-[#163828] hover:bg-[#122D20] text-white py-2.5 rounded-full text-xs font-semibold shadow-xs transition-colors shrink-0"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>New Chat</span>
             </button>
 
-            {/* History List */}
-            <div className="space-y-4 pt-1 overflow-y-auto max-h-[460px] pr-1">
-              {Object.entries(CHAT_HISTORY).map(([section, items]) => (
-                <div key={section} className="space-y-1.5">
-                  <span className="text-[11px] font-bold text-stone-400 uppercase tracking-wider block px-2">
-                    {section}
-                  </span>
-                  {items.map((title) => {
-                    const isActive = activeChatTitle === title;
-                    return (
-                      <button
-                        key={title}
-                        onClick={() => setActiveChatTitle(title)}
-                        className={`w-full text-left text-xs px-3.5 py-2 rounded-xl transition-all truncate block ${
-                          isActive
-                            ? 'bg-[#E9F0E8] text-[#163828] font-bold shadow-xs'
-                            : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/50 font-medium'
-                        }`}
-                      >
-                        {title}
-                      </button>
-                    );
-                  })}
+            {/* Real History List */}
+            <div className="space-y-1.5 flex-1 overflow-y-auto pr-1">
+              <span className="text-[11px] font-bold text-stone-400 uppercase tracking-wider block px-2 pb-1">
+                Your Conversations
+              </span>
+
+              {sessions.length === 0 ? (
+                <div className="p-4 text-center text-xs text-stone-400">
+                  No saved conversations yet.
                 </div>
-              ))}
+              ) : (
+                sessions.map((session) => {
+                  const isActive = session.id === currentSession.id;
+                  const dateStr = new Date(session.createdAt).toLocaleDateString([], {
+                    month: 'short',
+                    day: 'numeric',
+                  });
+
+                  return (
+                    <div
+                      key={session.id}
+                      onClick={() => setActiveSessionId(session.id)}
+                      className={`group w-full flex items-center justify-between text-left text-xs px-3.5 py-2.5 rounded-xl transition-all cursor-pointer ${
+                        isActive
+                          ? 'bg-[#E9F0E8] text-[#163828] font-bold shadow-xs'
+                          : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/50 font-medium'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 truncate pr-2">
+                        <MessageSquare className="w-3.5 h-3.5 shrink-0 opacity-60" />
+                        <span className="truncate">{session.title}</span>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className="text-[10px] text-stone-400 group-hover:hidden">
+                          {dateStr}
+                        </span>
+                        <button
+                          onClick={(e) => handleDeleteSession(e, session.id)}
+                          className="hidden group-hover:block p-1 text-stone-400 hover:text-rose-600 transition-colors"
+                          title="Delete chat"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
         </div>
@@ -219,11 +312,11 @@ Tip: Add the yogurt after removing the pan from high heat and stir continuously.
           {/* Top Bar with Clear Chat */}
           <div className="p-4 px-6 border-b border-[#EBE6DD] flex items-center justify-between">
             <div>
-              <h2 className="font-bold text-stone-900 text-sm">Chef RasoiAI</h2>
+              <h2 className="font-bold text-stone-900 text-sm">{currentSession.title}</h2>
               <p className="text-[11px] text-stone-500">Live culinary advice tailored to your pantry</p>
             </div>
             <button
-              onClick={handleClearChat}
+              onClick={handleClearCurrentChat}
               className="flex items-center gap-1.5 text-xs text-stone-500 hover:text-stone-800 font-medium px-3 py-1.5 rounded-lg hover:bg-stone-100 transition-colors"
               title="Clear conversation"
             >
@@ -232,8 +325,11 @@ Tip: Add the yogurt after removing the pan from high heat and stir continuously.
             </button>
           </div>
 
-          {/* Messages Feed */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-5">
+          {/* Messages Feed — strictly scrollable container */}
+          <div
+            ref={messagesContainerRef}
+            className="flex-1 overflow-y-auto p-6 space-y-5 scroll-smooth"
+          >
             {messages.map((msg) => {
               const isUser = msg.sender === 'user';
 
@@ -241,7 +337,7 @@ Tip: Add the yogurt after removing the pan from high heat and stir continuously.
                 return (
                   <div key={msg.id} className="flex justify-end items-end gap-2.5">
                     <div className="max-w-lg bg-[#E9F0E8] text-[#163828] p-4 rounded-2xl rounded-br-xs text-xs sm:text-sm font-medium shadow-xs">
-                      <p>{msg.text}</p>
+                      <p className="whitespace-pre-line">{msg.text}</p>
                       <span className="block text-[10px] text-[#163828]/60 text-right mt-1.5 font-normal">
                         {msg.timestamp}
                       </span>
@@ -311,13 +407,11 @@ Tip: Add the yogurt after removing the pan from high heat and stir continuously.
                 </div>
               </div>
             )}
-
-            <div ref={messagesEndRef} />
           </div>
 
           {/* Prompt Chips & Input Footer */}
           <div className="p-4 border-t border-[#EBE6DD] bg-[#FAF7F2]/60 space-y-3">
-            {/* Chips */}
+            {/* Suggested Chips that send real queries */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
               {SUGGESTED_CHIPS.map((chip, idx) => (
                 <button

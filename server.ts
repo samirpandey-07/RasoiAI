@@ -66,7 +66,7 @@ if (apiKey && apiKey !== 'MY_GEMINI_API_KEY') {
     apiKey: apiKey,
     httpOptions: {
       headers: {
-        'User-Agent': 'aistudio-build',
+        'User-Agent': 'RasoiAI-Culinary-Engine/1.0',
       },
     },
   });

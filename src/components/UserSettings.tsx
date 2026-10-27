@@ -6,6 +6,8 @@ import {
   RotateCcw,
   Sliders,
   CheckCircle2,
+  Check,
+  AlertCircle,
 } from 'lucide-react';
 import { InventoryItem, UserPreferences } from '../types';
 
@@ -99,17 +101,6 @@ export const UserSettings: React.FC<UserSettingsProps> = ({
       }
     };
     reader.readAsText(file);
-  };
-
-  // Copy Supabase SQL schema snippet
-  const handleCopySchema = () => {
-    const sqlNotice = `-- Run this in your Supabase SQL Editor:
--- Find complete migration in supabase/schema.sql in this project.
--- Contains tables for profiles, user_preferences, recipes, recipe_ingredients,
--- recipe_steps, inventory_items, favorites, scan_history, and RLS policies.`;
-    navigator.clipboard.writeText(sqlNotice);
-    setCopiedSql(true);
-    setTimeout(() => setCopiedSql(false), 2000);
   };
 
   return (

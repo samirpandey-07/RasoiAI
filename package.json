@@ -1,5 +1,12 @@
 {
-  "name": "smart-kitchen-ai",
+  "name": "rasoi-ai",
+  "description": "RasoiAI — Autonomous Culinary Intelligence & Zero-Waste Smart Kitchen System",
+  "author": "Samir Pandey",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/samirpandey-07/RasoiAI.git"
+  },
+  "homepage": "https://github.com/samirpandey-07/RasoiAI#readme",
   "private": true,
   "version": "1.0.0",
   "type": "module",
