@@ -16,6 +16,7 @@ import {
 import { Recipe, InventoryItem, UserPreferences, CuisineType } from '../types';
 import { generateCustomRecipe } from '../services/gemini';
 import { getExpiryStatus } from '../services/matching';
+import { AiSparkleBadge, AiSparkleIcon } from './AiSparkleIcon';
 
 interface AIRecipeGeneratorModalProps {
   isOpen: boolean;
@@ -124,17 +125,21 @@ export const AIRecipeGeneratorModal: React.FC<AIRecipeGeneratorModalProps> = ({
         </button>
 
         {/* Modal Header */}
-        <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E7EFEA] text-xs font-semibold text-[#1B4332]">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-700" />
-            <span>AI Dynamic Recipe Studio</span>
+        <div className="flex items-start gap-4">
+          <AiSparkleBadge size="lg" className="shrink-0" />
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl sm:text-2xl font-extrabold text-stone-900 tracking-tight">
+                AI Recipe Studio
+              </h2>
+              <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
+                Gemini
+              </span>
+            </div>
+            <p className="text-xs text-stone-500 leading-relaxed">
+              Select your available items. Gemini creates an authentic chef recipe tailored to rescue your expiring food.
+            </p>
           </div>
-          <h2 className="text-2xl font-extrabold text-[#143628] tracking-tight">
-            Craft a Recipe with Chef Gemini
-          </h2>
-          <p className="text-xs text-stone-600">
-            Select what you have in your kitchen. Gemini creates a fully structured recipe tailored to your exact ingredients, expiring items, and dietary needs.
-          </p>
         </div>
 
         {errorMessage && (

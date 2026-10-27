@@ -2,43 +2,55 @@
 
 @layer base {
   :root {
-    --bg-warm: #FAF8F5;
-    --surface-sage: #F0F4F1;
-    --border-sage: #E2EBE5;
-    --forest-900: #143628;
-    --forest-800: #1B4332;
-    --forest-700: #2D6A4F;
-    --forest-600: #40916C;
-    --forest-100: #E7EFEA;
-    --terracotta: #C85A32;
-    --warm-dark: #1F2923;
+    --bg-main: #FBFBFA;
+    --surface-card: #FFFFFF;
+    --border-subtle: rgba(0, 0, 0, 0.06);
+    --border-hover: rgba(0, 0, 0, 0.12);
+    --text-primary: #121513;
+    --text-secondary: #5E6660;
+    --text-muted: #8E9690;
+    --brand-accent: #EA580C;
+    --brand-dark: #121A15;
+  }
+
+  * {
+    border-color: var(--border-subtle);
   }
 
   body {
-    background-color: var(--bg-warm);
-    color: var(--warm-dark);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    letter-spacing: -0.011em;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     margin: 0;
     padding: 0;
   }
 }
 
-/* Custom scrollbars for kitchen counter screens */
+/* Minimal Luxury Custom Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1eb;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd8cf;
+  background: rgba(0, 0, 0, 0.12);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a3b8aa;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }

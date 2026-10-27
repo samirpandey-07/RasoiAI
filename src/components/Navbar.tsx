@@ -1,21 +1,8 @@
-import React from 'react';
-import {
-  ChefHat,
-  Camera,
-  BookOpen,
-  Refrigerator,
-  Clock,
-  Sparkles,
-  Heart,
-  Settings,
-  Database,
-  Menu,
-  X,
-  AlertTriangle,
-} from 'lucide-react';
+import React, { useState } from 'react';
 import { AppView, InventoryItem } from '../types';
 import { getExpiryStatus } from '../services/matching';
 import { isSupabaseConfigured } from '../services/supabase';
+import { AiSparkleBadge } from './AiSparkleIcon';
 
 interface NavbarProps {
   currentView: AppView;
@@ -30,7 +17,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   inventory,
   favoritesCount,
 }) => {
-  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Count items expiring in <= 3 days
   const expiringCount = inventory.filter(
@@ -39,29 +26,13 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const isSupabase = isSupabaseConfigured();
 
-  const navItems = [
-    { id: 'dashboard' as AppView, label: 'Dashboard', icon: ChefHat },
-    { id: 'scanner' as AppView, label: 'Scan Food', icon: Camera, highlight: true },
-    { id: 'recipes' as AppView, label: 'Recipes', icon: BookOpen },
-    {
-      id: 'inventory' as AppView,
-      label: 'My Kitchen',
-      icon: Refrigerator,
-      badge: inventory.length > 0 ? inventory.length : undefined,
-    },
-    {
-      id: 'expiry' as AppView,
-      label: 'Expiry Tracker',
-      icon: Clock,
-      alertBadge: expiringCount > 0 ? expiringCount : undefined,
-    },
-    { id: 'assistant' as AppView, label: 'AI Chef', icon: Sparkles },
-    {
-      id: 'favorites' as AppView,
-      label: 'Saved',
-      icon: Heart,
-      badge: favoritesCount > 0 ? favoritesCount : undefined,
-    },
+  const navItems: { id: AppView; label: string; badge?: number; alertDot?: boolean }[] = [
+    { id: 'dashboard', label: 'Dashboard' },
+    { id: 'recipes', label: 'Recipes' },
+    { id: 'inventory', label: 'Kitchen', badge: inventory.length > 0 ? inventory.length : undefined },
+    { id: 'expiry', label: 'Expiry', alertDot: expiringCount > 0 },
+    { id: 'assistant', label: 'AI Chef' },
+    { id: 'favorites', label: 'Saved', badge: favoritesCount > 0 ? favoritesCount : undefined },
   ];
 
   const handleNav = (view: AppView) => {
@@ -70,154 +41,178 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-md border-b border-[#E2EBE5]">
+    <header className="sticky top-0 z-50 bg-[#FBFBFA]/90 backdrop-blur-xl border-b border-black/[0.06] transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo & Brand */}
+          {/* Brand Logo & Mark */}
           <div
             onClick={() => handleNav('landing')}
             className="flex items-center gap-3 cursor-pointer group select-none"
           >
-            <div className="w-10 h-10 rounded-xl bg-[#1B4332] text-white flex items-center justify-center shadow-sm group-hover:bg-[#143628] transition-colors">
-              <ChefHat className="w-6 h-6 text-[#E7EFEA]" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-lg text-[#1B4332] tracking-tight">Smart Kitchen</span>
-                <span className="text-[10px] font-semibold bg-[#E7EFEA] text-[#1B4332] px-1.5 py-0.5 rounded uppercase tracking-wider">
+            <AiSparkleBadge size="md" className="group-hover:scale-105 transition-transform" />
+            <div className="flex flex-col">
+              <div className="flex items-center gap-1.5">
+                <span className="font-bold text-base tracking-tight text-stone-900">
+                  Smart Kitchen
+                </span>
+                <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded-full uppercase tracking-wider">
                   AI
                 </span>
               </div>
-              <p className="text-[11px] text-stone-500 hidden sm:block">Zero-Waste Culinary Intelligence</p>
+              <span className="text-[10px] text-stone-600 hidden md:inline tracking-normal font-medium">
+                Culinary Intelligence
+              </span>
             </div>
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1">
+          {/* Desktop Minimalist Text Navigation */}
+          <nav className="hidden lg:flex items-center gap-1 bg-stone-100/70 p-1 rounded-xl border border-black/[0.04]">
             {navItems.map((item) => {
-              const Icon = item.icon;
               const isActive = currentView === item.id;
               return (
                 <button
                   key={item.id}
                   onClick={() => handleNav(item.id)}
-                  className={`relative flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`relative px-3.5 py-1.5 rounded-lg text-xs font-semibold tracking-tight transition-all flex items-center gap-1.5 select-none ${
                     isActive
-                      ? 'bg-[#1B4332] text-white shadow-sm'
-                      : item.highlight
-                      ? 'text-[#1B4332] bg-[#E7EFEA] hover:bg-[#d8e4dc]'
-                      : 'text-stone-700 hover:text-[#1B4332] hover:bg-[#F0F4F1]'
+                      ? 'bg-stone-900 text-white shadow-xs'
+                      : 'text-stone-600 hover:text-stone-950 hover:bg-white/80'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : item.highlight ? 'text-[#1B4332]' : 'text-stone-500'}`} />
                   <span>{item.label}</span>
 
                   {item.badge !== undefined && (
                     <span
-                      className={`text-xs px-1.5 py-0.2 rounded-full font-semibold ${
-                        isActive ? 'bg-white/20 text-white' : 'bg-[#E7EFEA] text-[#1B4332]'
+                      className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                        isActive
+                          ? 'bg-white/20 text-white'
+                          : 'bg-stone-200 text-stone-700'
                       }`}
                     >
                       {item.badge}
                     </span>
                   )}
 
-                  {item.alertBadge !== undefined && (
-                    <span className="flex items-center gap-0.5 text-xs px-1.5 py-0.5 rounded-full font-bold bg-amber-500 text-white animate-pulse">
-                      <AlertTriangle className="w-3 h-3" />
-                      {item.alertBadge}
-                    </span>
+                  {item.alertDot && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
                   )}
                 </button>
               );
             })}
           </nav>
 
-          {/* Right Controls: Database state & Settings */}
+          {/* Right Action Bar */}
           <div className="flex items-center gap-2">
+            {/* Direct Scan CTA Button */}
             <button
-              onClick={() => handleNav('settings')}
-              title={isSupabase ? 'Supabase Postgres Connected' : 'Local Storage Mode (Click to configure Supabase)'}
-              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-md border border-[#E2EBE5] bg-white text-stone-600 hover:bg-[#F0F4F1] transition-colors"
-            >
-              <Database className={`w-3.5 h-3.5 ${isSupabase ? 'text-emerald-600' : 'text-stone-400'}`} />
-              <span className="font-medium">{isSupabase ? 'Supabase' : 'Local DB'}</span>
-            </button>
-
-            <button
-              onClick={() => handleNav('settings')}
-              className={`p-2 rounded-lg text-stone-600 hover:text-[#1B4332] hover:bg-[#F0F4F1] transition-colors ${
-                currentView === 'settings' ? 'bg-[#E7EFEA] text-[#1B4332]' : ''
+              onClick={() => handleNav('scanner')}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 ${
+                currentView === 'scanner'
+                  ? 'bg-amber-600 text-white'
+                  : 'bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 active:scale-95'
               }`}
-              title="Settings & Preferences"
             >
-              <Settings className="w-5 h-5" />
+              <span>+ Scan Food</span>
             </button>
 
-            {/* Mobile menu trigger */}
+            {/* Supabase Status Pill */}
+            <button
+              onClick={() => handleNav('settings')}
+              title={isSupabase ? 'Cloud Sync Active (Supabase)' : 'Offline Local Storage (Click to connect Cloud)'}
+              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-medium rounded-lg border border-black/[0.06] bg-white text-stone-600 hover:bg-stone-50 transition-colors"
+            >
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  isSupabase ? 'bg-emerald-500' : 'bg-stone-400'
+                }`}
+              />
+              <span>{isSupabase ? 'Cloud' : 'Local'}</span>
+            </button>
+
+            {/* Settings Link */}
+            <button
+              onClick={() => handleNav('settings')}
+              className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-colors ${
+                currentView === 'settings'
+                  ? 'bg-stone-900 text-white border-stone-900'
+                  : 'border-black/[0.06] bg-white text-stone-700 hover:bg-stone-50'
+              }`}
+            >
+              Settings
+            </button>
+
+            {/* Mobile Hamburger Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg text-stone-700 hover:bg-[#F0F4F1]"
-              aria-label="Toggle menu"
+              aria-label="Toggle Navigation Menu"
+              className="lg:hidden p-2 rounded-lg border border-black/[0.06] bg-white text-stone-700 hover:bg-stone-100 transition-colors flex flex-col justify-center items-center w-9 h-9 gap-1"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              <span
+                className={`w-4 h-0.5 bg-stone-800 transition-transform ${
+                  mobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''
+                }`}
+              />
+              <span
+                className={`w-4 h-0.5 bg-stone-800 transition-opacity ${
+                  mobileMenuOpen ? 'opacity-0' : ''
+                }`}
+              />
+              <span
+                className={`w-4 h-0.5 bg-stone-800 transition-transform ${
+                  mobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''
+                }`}
+              />
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-[#E2EBE5] bg-[#FAF8F5] px-4 pt-3 pb-6 space-y-1 shadow-lg">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = currentView === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => handleNav(item.id)}
-                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm font-medium ${
-                  isActive
-                    ? 'bg-[#1B4332] text-white'
-                    : 'text-stone-700 hover:bg-[#F0F4F1] hover:text-[#1B4332]'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-stone-500'}`} />
+        <div className="lg:hidden border-b border-black/[0.06] bg-[#FBFBFA]/98 backdrop-blur-2xl px-4 pt-3 pb-5 space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="grid grid-cols-2 gap-2 pb-2">
+            {navItems.map((item) => {
+              const isActive = currentView === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => handleNav(item.id)}
+                  className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                    isActive
+                      ? 'bg-stone-900 text-white shadow-xs'
+                      : 'bg-white border border-black/[0.05] text-stone-700 hover:bg-stone-100'
+                  }`}
+                >
                   <span>{item.label}</span>
-                </div>
-                <div className="flex items-center gap-2">
                   {item.badge !== undefined && (
                     <span
-                      className={`text-xs px-2 py-0.5 rounded-full ${
+                      className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
                         isActive ? 'bg-white/20 text-white' : 'bg-stone-200 text-stone-700'
                       }`}
                     >
                       {item.badge}
                     </span>
                   )}
-                  {item.alertBadge !== undefined && (
-                    <span className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-bold bg-amber-500 text-white">
-                      <AlertTriangle className="w-3 h-3" />
-                      {item.alertBadge} Expiring
-                    </span>
+                  {item.alertDot && (
+                    <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                   )}
-                </div>
-              </button>
-            );
-          })}
-          <div className="pt-2 border-t border-stone-200">
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="pt-2 border-t border-black/[0.06] flex items-center justify-between gap-2">
+            <button
+              onClick={() => handleNav('scanner')}
+              className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs font-bold text-center shadow-xs"
+            >
+              + Scan Food
+            </button>
             <button
               onClick={() => handleNav('settings')}
-              className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm font-medium text-stone-600 hover:bg-[#F0F4F1]"
+              className="px-4 py-2.5 rounded-xl bg-white border border-black/[0.06] text-stone-700 text-xs font-semibold"
             >
-              <div className="flex items-center gap-3">
-                <Settings className="w-5 h-5 text-stone-500" />
-                <span>Settings & Database</span>
-              </div>
-              <span className="text-xs px-2 py-0.5 bg-stone-100 rounded text-stone-600">
-                {isSupabase ? 'Supabase Active' : 'Local Mode'}
-              </span>
+              Settings
             </button>
           </div>
         </div>
