@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-warm: #FAF8F5;
+    --surface-sage: #F0F4F1;
+    --border-sage: #E2EBE5;
+    --forest-900: #143628;
+    --forest-800: #1B4332;
+    --forest-700: #2D6A4F;
+    --forest-600: #40916C;
+    --forest-100: #E7EFEA;
+    --terracotta: #C85A32;
+    --warm-dark: #1F2923;
+  }
+
+  body {
+    background-color: var(--bg-warm);
+    color: var(--warm-dark);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Custom scrollbars for kitchen counter screens */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1eb;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd8cf;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a3b8aa;
+}

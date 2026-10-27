@@ -1,0 +1,6 @@
+{
+  "name": "Smart Kitchen AI",
+  "description": "AI-powered smart kitchen companion for ingredient recognition, recipe matching, inventory tracking, expiry management, and intelligent cooking assistance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

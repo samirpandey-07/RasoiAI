@@ -1,0 +1,17 @@
+services:
+  smart-kitchen-ai:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smart-kitchen-ai
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+      - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+    env_file:
+      - .env
