@@ -295,7 +295,7 @@ export const KitchenInventory: React.FC<KitchenInventoryProps> = ({
             return (
               <div
                 key={item.id}
-                className="p-4 sm:px-6 flex items-center justify-between gap-4 hover:bg-[#FAF7F2]/50 transition-colors"
+                className="p-3.5 sm:p-4 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-[#FAF7F2]/50 transition-colors"
               >
                 {/* Left: Emoji Icon, Name & Category */}
                 <div className="flex items-center gap-3.5 min-w-0">
@@ -309,8 +309,8 @@ export const KitchenInventory: React.FC<KitchenInventoryProps> = ({
                 </div>
 
                 {/* Right Group: Quantity, Expiry Badge, Actions */}
-                <div className="flex items-center gap-4 sm:gap-6 shrink-0">
-                  <div className="text-right">
+                <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-6 w-full sm:w-auto pt-2 sm:pt-0 border-t border-stone-100 sm:border-0 shrink-0">
+                  <div className="text-left sm:text-right">
                     <span className="font-bold text-stone-900 text-xs sm:text-sm">
                       {item.quantity} {item.unit}
                     </span>
@@ -319,7 +319,7 @@ export const KitchenInventory: React.FC<KitchenInventoryProps> = ({
                   {/* Expiry Status Badge */}
                   <div>
                     <span
-                      className={`text-[11px] font-bold px-3 py-1 rounded-full whitespace-nowrap ${badgeClass}`}
+                      className={`text-[10px] sm:text-[11px] font-bold px-2.5 sm:px-3 py-1 rounded-full whitespace-nowrap ${badgeClass}`}
                     >
                       {badgeText}
                     </span>

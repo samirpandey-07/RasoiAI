@@ -78,6 +78,7 @@ export const AICookingAssistant: React.FC<AICookingAssistantProps> = ({
   const [inputPrompt, setInputPrompt] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
 
   // Messages container ref for strictly internal scrolling (no window jump)
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -229,11 +230,11 @@ export const AICookingAssistant: React.FC<AICookingAssistantProps> = ({
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl border border-[#EBE6DD] overflow-hidden shadow-[0_2px_15px_rgba(0,0,0,0.03)] flex flex-col md:flex-row h-[700px]">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-7 animate-in fade-in duration-200">
+      <div className="bg-white rounded-3xl border border-[#EBE6DD] overflow-hidden shadow-[0_2px_15px_rgba(0,0,0,0.03)] flex flex-col md:flex-row h-[620px] sm:h-[680px] md:h-[700px]">
         {/* Left Sidebar: Real Saved Chats */}
-        <div className="w-full md:w-72 lg:w-80 bg-[#FAF7F2] border-r border-[#EBE6DD] p-5 flex flex-col justify-between shrink-0">
-          <div className="space-y-5 flex-1 flex flex-col overflow-hidden">
+        <div className={`w-full md:w-72 lg:w-80 bg-[#FAF7F2] border-r border-[#EBE6DD] p-4 sm:p-5 flex-col justify-between shrink-0 ${showMobileSidebar ? 'flex' : 'hidden md:flex'}`}>
+          <div className="space-y-4 sm:space-y-5 flex-1 flex flex-col overflow-hidden">
             {/* Chef Profile Header */}
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-[#E67E22] text-white flex items-center justify-center font-bold text-sm shadow-xs shrink-0">
@@ -247,7 +248,10 @@ export const AICookingAssistant: React.FC<AICookingAssistantProps> = ({
 
             {/* + New Chat Button */}
             <button
-              onClick={handleNewChat}
+              onClick={() => {
+                handleNewChat();
+                setShowMobileSidebar(false);
+              }}
               className="w-full flex items-center justify-center gap-2 bg-[#163828] hover:bg-[#122D20] text-white py-2.5 rounded-full text-xs font-semibold shadow-xs transition-colors shrink-0"
             >
               <Plus className="w-3.5 h-3.5" />
@@ -275,7 +279,10 @@ export const AICookingAssistant: React.FC<AICookingAssistantProps> = ({
                   return (
                     <div
                       key={session.id}
-                      onClick={() => setActiveSessionId(session.id)}
+                      onClick={() => {
+                        setActiveSessionId(session.id);
+                        setShowMobileSidebar(false);
+                      }}
                       className={`group w-full flex items-center justify-between text-left text-xs px-3.5 py-2.5 rounded-xl transition-all cursor-pointer ${
                         isActive
                           ? 'bg-[#E9F0E8] text-[#163828] font-bold shadow-xs'
@@ -308,20 +315,29 @@ export const AICookingAssistant: React.FC<AICookingAssistantProps> = ({
         </div>
 
         {/* Right Main Chat Area */}
-        <div className="flex-1 flex flex-col justify-between bg-white h-full overflow-hidden">
-          {/* Top Bar with Clear Chat */}
-          <div className="p-4 px-6 border-b border-[#EBE6DD] flex items-center justify-between">
-            <div>
-              <h2 className="font-bold text-stone-900 text-sm">{currentSession.title}</h2>
-              <p className="text-[11px] text-stone-500">Live culinary advice tailored to your pantry</p>
+        <div className={`flex-1 flex-col justify-between bg-white h-full overflow-hidden ${showMobileSidebar ? 'hidden md:flex' : 'flex'}`}>
+          {/* Top Bar with Mobile Toggle and Clear Chat */}
+          <div className="p-3.5 sm:p-4 px-4 sm:px-6 border-b border-[#EBE6DD] flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <button
+                onClick={() => setShowMobileSidebar(!showMobileSidebar)}
+                className="md:hidden flex items-center gap-1 text-[11px] font-bold px-3 py-1.5 rounded-full bg-[#E9F0E8] text-[#163828] shrink-0 hover:bg-[#DDEAE1] transition-colors"
+              >
+                <MessageSquare className="w-3.5 h-3.5" />
+                <span>{sessions.length}</span>
+              </button>
+              <div className="min-w-0">
+                <h2 className="font-bold text-stone-900 text-sm truncate">{currentSession.title}</h2>
+                <p className="text-[11px] text-stone-500 hidden sm:block">Live culinary advice tailored to your pantry</p>
+              </div>
             </div>
             <button
               onClick={handleClearCurrentChat}
-              className="flex items-center gap-1.5 text-xs text-stone-500 hover:text-stone-800 font-medium px-3 py-1.5 rounded-lg hover:bg-stone-100 transition-colors"
+              className="flex items-center gap-1.5 text-xs text-stone-500 hover:text-stone-800 font-medium px-2.5 sm:px-3 py-1.5 rounded-lg hover:bg-stone-100 transition-colors shrink-0"
               title="Clear conversation"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span>Clear Chat</span>
+              <span className="hidden sm:inline">Clear Chat</span>
             </button>
           </div>
 

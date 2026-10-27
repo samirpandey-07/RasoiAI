@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { AppView, InventoryItem, RecipeMatchResult } from '../types';
 import { getExpiryStatus } from '../services/matching';
+import { OptimizedImage } from './OptimizedImage';
 
 interface DashboardProps {
   inventory: InventoryItem[];
@@ -82,13 +83,16 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
 
         {/* Visual Salad Bowl Illustration with Badge */}
-        <div className="relative w-56 sm:w-64 h-48 sm:h-52 rounded-2xl overflow-hidden shrink-0 shadow-sm border border-stone-200/60">
-          <img
-            src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80"
+        <div className="relative w-full sm:w-64 h-44 sm:h-52 rounded-2xl overflow-hidden shrink-0 shadow-sm border border-stone-200/60">
+          <OptimizedImage
+            src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=70"
             alt="Fresh healthy bowl"
+            widthParam={600}
+            qualityParam={70}
             className="w-full h-full object-cover"
+            containerClassName="w-full h-full"
           />
-          <div className="absolute bottom-2.5 right-2.5 bg-[#E9F0E8] text-[#163828] text-[10px] font-bold px-2.5 py-1 rounded-full shadow-xs flex items-center gap-1">
+          <div className="absolute bottom-2.5 right-2.5 bg-[#E9F0E8] text-[#163828] text-[10px] font-bold px-2.5 py-1 rounded-full shadow-xs flex items-center gap-1 z-10">
             <Sparkles className="w-3 h-3 text-[#163828]" />
             <span>Fresh & Healthy &bull; AI Powered</span>
           </div>
@@ -210,12 +214,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
             >
               {/* Thumbnail with Match Badge & Heart */}
               <div className="relative h-44 overflow-hidden bg-stone-100">
-                <img
+                <OptimizedImage
                   src={recipe.imageUrl}
                   alt={recipe.name}
+                  widthParam={420}
+                  qualityParam={65}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  containerClassName="w-full h-full"
                 />
-                <div className="absolute top-2.5 left-2.5">
+                <div className="absolute top-2.5 left-2.5 z-10">
                   <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-[#E9F0E8] text-[#163828] shadow-xs">
                     {matchPercentage}% Match
                   </span>

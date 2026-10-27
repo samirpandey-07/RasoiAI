@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { Recipe, RecipeMatchResult, InventoryItem } from '../types';
 import { getSubstitutions } from '../services/gemini';
+import { OptimizedImage } from './OptimizedImage';
 
 interface RecipeDetailsProps {
   recipe: Recipe;
@@ -76,19 +77,19 @@ export const RecipeDetails: React.FC<RecipeDetailsProps> = ({
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 pb-20">
       {/* Top Back & Action Navigation */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-stone-600 hover:text-[#1B4332] transition-colors"
+          className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-stone-600 hover:text-[#1B4332] transition-colors py-1"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Explorer</span>
         </button>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={() => onToggleFavorite(recipe.id)}
-            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl border text-xs font-semibold transition-all ${
+            className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2.5 sm:py-2 rounded-xl border text-xs font-semibold transition-all ${
               isFavorite
                 ? 'bg-rose-50 border-rose-200 text-rose-700'
                 : 'bg-white border-stone-300 text-stone-700 hover:bg-stone-50'
@@ -100,7 +101,7 @@ export const RecipeDetails: React.FC<RecipeDetailsProps> = ({
 
           <button
             onClick={() => onStartCooking(recipe.id)}
-            className="flex items-center gap-2 px-5 py-2 rounded-xl bg-[#1B4332] text-white text-xs font-semibold shadow-md hover:bg-[#143628] transition-all"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 sm:py-2 rounded-xl bg-[#1B4332] text-white text-xs font-semibold shadow-md hover:bg-[#143628] transition-all"
           >
             <Play className="w-3.5 h-3.5 fill-current" />
             <span>Start Cooking Mode</span>
@@ -112,13 +113,16 @@ export const RecipeDetails: React.FC<RecipeDetailsProps> = ({
       <div className="bg-white rounded-3xl border border-[#E2EBE5] overflow-hidden shadow-xs">
         <div className="grid md:grid-cols-12 gap-0">
           {/* Image */}
-          <div className="md:col-span-5 relative h-72 md:h-auto min-h-[300px] bg-stone-100">
-            <img
+          <div className="md:col-span-5 relative h-72 md:h-auto min-h-[260px] sm:min-h-[300px] bg-stone-100">
+            <OptimizedImage
               src={recipe.imageUrl}
               alt={recipe.name}
+              widthParam={700}
+              qualityParam={75}
               className="w-full h-full object-cover"
+              containerClassName="w-full h-full"
             />
-            <div className="absolute top-4 left-4">
+            <div className="absolute top-4 left-4 z-10">
               <span className="text-xs font-bold px-3 py-1 rounded-lg bg-white/95 text-[#1B4332] shadow-sm">
                 {recipe.cuisine} Cuisine
               </span>

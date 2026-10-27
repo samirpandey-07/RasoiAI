@@ -1,6 +1,6 @@
-import React from 'react';
 import { Heart, BookOpen, Clock, ArrowRight } from 'lucide-react';
 import { RecipeMatchResult, AppView } from '../types';
+import { OptimizedImage } from './OptimizedImage';
 
 interface FavoritesProps {
   favorites: string[];
@@ -60,7 +60,7 @@ export const Favorites: React.FC<FavoritesProps> = ({
           </button>
         </div>
       ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {favoriteMatches.map(({ recipe, matchPercentage, missingIngredients }) => (
             <div
               key={recipe.id}
@@ -69,12 +69,15 @@ export const Favorites: React.FC<FavoritesProps> = ({
             >
               <div>
                 <div className="relative h-44 overflow-hidden bg-stone-100">
-                  <img
+                  <OptimizedImage
                     src={recipe.imageUrl}
                     alt={recipe.name}
+                    widthParam={440}
+                    qualityParam={65}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    containerClassName="w-full h-full"
                   />
-                  <div className="absolute top-3 left-3">
+                  <div className="absolute top-3 left-3 z-10">
                     <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-white/95 text-[#1B4332]">
                       {recipe.cuisine}
                     </span>

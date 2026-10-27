@@ -10,6 +10,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { CuisineType, RecipeMatchResult, InventoryItem } from '../types';
+import { OptimizedImage } from './OptimizedImage';
 
 interface RecipeExplorerProps {
   matches: RecipeMatchResult[];
@@ -120,10 +121,13 @@ export const RecipeExplorer: React.FC<RecipeExplorerProps> = ({
               </button>
             )}
           </div>
-          <img
-            src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=160&q=80"
+          <OptimizedImage
+            src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=160&q=70"
             alt="Produce bowl"
+            widthParam={160}
+            qualityParam={70}
             className="w-14 h-14 rounded-xl object-cover shrink-0"
+            containerClassName="w-14 h-14 rounded-xl shrink-0"
           />
         </div>
       </div>
@@ -248,12 +252,15 @@ export const RecipeExplorer: React.FC<RecipeExplorerProps> = ({
               >
                 {/* Thumbnail with Match Badge & Heart */}
                 <div className="relative h-48 overflow-hidden bg-stone-100">
-                  <img
+                  <OptimizedImage
                     src={recipe.imageUrl}
                     alt={recipe.name}
+                    widthParam={440}
+                    qualityParam={65}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    containerClassName="w-full h-full"
                   />
-                  <div className="absolute top-2.5 left-2.5">
+                  <div className="absolute top-2.5 left-2.5 z-10">
                     <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-[#E9F0E8] text-[#163828] shadow-xs">
                       {matchPercentage}% Match
                     </span>

@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { InventoryItem, RecipeMatchResult, AppView } from '../types';
 import { getExpiryStatus } from '../services/matching';
+import { OptimizedImage } from './OptimizedImage';
 
 interface ExpiryTrackerProps {
   inventory: InventoryItem[];
@@ -73,10 +74,13 @@ export const ExpiryTracker: React.FC<ExpiryTrackerProps> = ({
               </button>
             )}
           </div>
-          <img
-            src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=160&q=80"
+          <OptimizedImage
+            src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=160&q=70"
             alt="Fresh produce"
+            widthParam={160}
+            qualityParam={70}
             className="w-14 h-14 rounded-xl object-cover shrink-0"
+            containerClassName="w-14 h-14 rounded-xl shrink-0"
           />
         </div>
       </div>
@@ -165,12 +169,15 @@ export const ExpiryTracker: React.FC<ExpiryTrackerProps> = ({
               >
                 {/* Image with Orange Pill & Heart */}
                 <div className="relative h-44 overflow-hidden bg-stone-100">
-                  <img
+                  <OptimizedImage
                     src={recipe.imageUrl}
                     alt={recipe.name}
+                    widthParam={440}
+                    qualityParam={65}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    containerClassName="w-full h-full"
                   />
-                  <div className="absolute top-2.5 left-2.5">
+                  <div className="absolute top-2.5 left-2.5 z-10">
                     <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-[#E67E22] text-white shadow-xs">
                       Uses: {rescueItemName}
                     </span>

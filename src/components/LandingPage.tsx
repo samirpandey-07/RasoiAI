@@ -13,6 +13,7 @@ import {
   Users,
 } from 'lucide-react';
 import { AppView, Recipe } from '../types';
+import { OptimizedImage } from './OptimizedImage';
 
 interface LandingPageProps {
   onNavigate: (view: AppView) => void;
@@ -29,8 +30,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* Decorative Basil Leaf (Left Side) */}
       <div className="absolute top-10 -left-6 pointer-events-none select-none opacity-85 hidden xl:block">
         <img
-          src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=260&q=80"
+          src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=180&q=60"
           alt="Fresh herbs"
+          loading="lazy"
+          decoding="async"
           className="w-44 h-44 object-contain rotate-[-20deg] drop-shadow-md"
         />
       </div>
@@ -38,8 +41,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* Decorative Basil & Tomato (Bottom Left) */}
       <div className="absolute -bottom-8 -left-8 pointer-events-none select-none opacity-90 hidden xl:block">
         <img
-          src="https://images.unsplash.com/photo-1582284540020-8acbe03f4924?auto=format&fit=crop&w=280&q=80"
+          src="https://images.unsplash.com/photo-1582284540020-8acbe03f4924?auto=format&fit=crop&w=180&q=60"
           alt="Culinary produce"
+          loading="lazy"
+          decoding="async"
           className="w-56 h-56 object-contain rotate-[15deg] drop-shadow-lg"
         />
       </div>
@@ -47,8 +52,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* Decorative Herb Sprig (Right Side) */}
       <div className="absolute top-1/2 -right-10 pointer-events-none select-none opacity-80 hidden xl:block">
         <img
-          src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=260&q=80"
+          src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=180&q=60"
           alt="Fresh herbs"
+          loading="lazy"
+          decoding="async"
           className="w-48 h-48 object-contain rotate-[45deg] drop-shadow-md"
         />
       </div>
@@ -163,12 +170,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <div className="bg-white rounded-[28px] p-5 shadow-[0_12px_45px_rgba(0,0,0,0.06)] border border-[#EBE6DD] space-y-4">
               {/* Scan Preview Image Bowl */}
               <div className="relative h-64 sm:h-72 rounded-2xl overflow-hidden bg-stone-100">
-                <img
-                  src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80"
+                <OptimizedImage
+                  src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=650&q=70"
                   alt="Fresh kitchen ingredients bowl"
+                  widthParam={650}
+                  qualityParam={70}
                   className="w-full h-full object-cover"
+                  containerClassName="w-full h-full"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
 
                 {/* Overlays on image */}
                 <div className="absolute top-3 left-3">
@@ -240,10 +250,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 className="p-3.5 rounded-2xl bg-[#FAF7F2] border border-[#EBE6DD] flex items-center justify-between gap-3 cursor-pointer group hover:border-[#163828]/40 transition-all"
               >
                 <div className="flex items-center gap-3">
-                  <img
-                    src="https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=200&q=80"
+                  <OptimizedImage
+                    src="https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=160&q=70"
                     alt="Palak Paneer"
+                    widthParam={160}
+                    qualityParam={70}
                     className="w-16 h-16 rounded-xl object-cover shrink-0"
+                    containerClassName="w-16 h-16 rounded-xl shrink-0"
                   />
                   <div>
                     <div className="flex items-center gap-1 text-[11px] font-bold text-[#E67E22] uppercase tracking-wider">

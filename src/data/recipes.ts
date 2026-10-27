@@ -14,7 +14,7 @@ export const RECIPES: Recipe[] = [
     servings: 4,
     dietaryTags: ['High-Protein', 'Gluten-Free'],
     allergens: ['Dairy'],
-    imageUrl: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Chicken Breast or Thighs', normalizedName: 'chicken', amount: 600, unit: 'g' },
       { name: 'Roma Tomatoes (Pureed)', normalizedName: 'tomato', amount: 400, unit: 'g' },
@@ -69,7 +69,7 @@ export const RECIPES: Recipe[] = [
     servings: 4,
     dietaryTags: ['Vegetarian', 'Gluten-Free', 'High-Protein'],
     allergens: ['Dairy'],
-    imageUrl: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Paneer (Cottage Cheese)', normalizedName: 'paneer', amount: 300, unit: 'g' },
       { name: 'Fresh Spinach', normalizedName: 'spinach', amount: 500, unit: 'g' },
@@ -116,7 +116,7 @@ export const RECIPES: Recipe[] = [
     servings: 4,
     dietaryTags: ['Vegan', 'Vegetarian', 'Gluten-Free', 'Dairy-Free', 'High-Protein'],
     allergens: [],
-    imageUrl: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Cooked Chickpeas (or 2 cans drained)', normalizedName: 'chickpeas', amount: 400, unit: 'g' },
       { name: 'Yellow Onion (Finely Chopped)', normalizedName: 'onion', amount: 2, unit: 'medium' },
@@ -164,7 +164,7 @@ export const RECIPES: Recipe[] = [
     servings: 4,
     dietaryTags: ['Vegetarian', 'Gluten-Free', 'High-Protein'],
     allergens: [],
-    imageUrl: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Yellow Lentils (Toor or Moong Dal)', normalizedName: 'lentils', amount: 200, unit: 'g' },
       { name: 'Tomato', normalizedName: 'tomato', amount: 1, unit: 'medium' },
@@ -210,7 +210,7 @@ export const RECIPES: Recipe[] = [
     servings: 4,
     dietaryTags: ['Vegan', 'Vegetarian', 'Gluten-Free', 'Dairy-Free'],
     allergens: [],
-    imageUrl: 'https://images.unsplash.com/photo-1645177628172-a94c1f96e6db?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1645177628172-a94c1f96e6db?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Cauliflower (Florets)', normalizedName: 'cauliflower', amount: 400, unit: 'g' },
       { name: 'Potatoes (Cubed)', normalizedName: 'potato', amount: 300, unit: 'g' },
@@ -258,7 +258,7 @@ export const RECIPES: Recipe[] = [
     servings: 2,
     dietaryTags: ['Vegetarian', 'Dairy-Free'],
     allergens: ['Gluten'],
-    imageUrl: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Spaghetti Pasta', normalizedName: 'pasta', amount: 200, unit: 'g' },
       { name: 'Extra Virgin Olive Oil', normalizedName: 'olive oil', amount: 4, unit: 'tbsp' },
@@ -303,7 +303,7 @@ export const RECIPES: Recipe[] = [
     servings: 4,
     dietaryTags: ['High-Protein', 'Gluten-Free'],
     allergens: ['Dairy'],
-    imageUrl: 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Chicken Breast (Halved horizontally)', normalizedName: 'chicken', amount: 600, unit: 'g' },
       { name: 'Garlic Cloves (Minced)', normalizedName: 'garlic', amount: 5, unit: 'clove' },
@@ -354,7 +354,7 @@ export const RECIPES: Recipe[] = [
     servings: 2,
     dietaryTags: ['Vegetarian'],
     allergens: ['Dairy', 'Gluten'],
-    imageUrl: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Pizza Dough or Artisan Flatbread', normalizedName: 'flour', amount: 250, unit: 'g' },
       { name: 'Crushed Canned Tomatoes', normalizedName: 'tomato', amount: 150, unit: 'g' },
@@ -397,7 +397,7 @@ export const RECIPES: Recipe[] = [
     servings: 6,
     dietaryTags: ['Vegan', 'Vegetarian', 'Dairy-Free'],
     allergens: ['Gluten'],
-    imageUrl: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Canned White Beans or Kidney Beans', normalizedName: 'beans', amount: 400, unit: 'g' },
       { name: 'Carrot (Diced)', normalizedName: 'carrot', amount: 2, unit: 'medium' },
@@ -446,7 +446,7 @@ export const RECIPES: Recipe[] = [
     servings: 3,
     dietaryTags: ['Vegan', 'Vegetarian', 'Gluten-Free', 'Dairy-Free'],
     allergens: [],
-    imageUrl: 'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Ripe Avocados', normalizedName: 'avocado', amount: 2, unit: 'piece' },
       { name: 'Black Beans (Cooked or Canned)', normalizedName: 'black beans', amount: 300, unit: 'g' },
@@ -491,7 +491,7 @@ export const RECIPES: Recipe[] = [
     servings: 4,
     dietaryTags: ['High-Protein', 'Dairy-Free'],
     allergens: [],
-    imageUrl: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Chicken Breast (Sliced into strips)', normalizedName: 'chicken', amount: 500, unit: 'g' },
       { name: 'Bell Peppers (Assorted colors)', normalizedName: 'bell pepper', amount: 2, unit: 'medium' },
@@ -537,7 +537,7 @@ export const RECIPES: Recipe[] = [
     servings: 4,
     dietaryTags: ['Vegan', 'Vegetarian', 'Gluten-Free', 'Dairy-Free'],
     allergens: [],
-    imageUrl: 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Coconut Milk (Full Fat)', normalizedName: 'coconut milk', amount: 400, unit: 'ml' },
       { name: 'Thai Green Curry Paste', normalizedName: 'curry paste', amount: 3, unit: 'tbsp' },
@@ -589,7 +589,7 @@ export const RECIPES: Recipe[] = [
     servings: 2,
     dietaryTags: ['High-Protein', 'Dairy-Free'],
     allergens: ['Soy'],
-    imageUrl: 'https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Ground Chicken or Firm Tofu', normalizedName: 'chicken', amount: 350, unit: 'g' },
       { name: 'Garlic Cloves (Crushed)', normalizedName: 'garlic', amount: 6, unit: 'clove' },
@@ -636,7 +636,7 @@ export const RECIPES: Recipe[] = [
     servings: 2,
     dietaryTags: ['High-Protein', 'Dairy-Free'],
     allergens: ['Soy'],
-    imageUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Chicken Thighs (Boneless)', normalizedName: 'chicken', amount: 400, unit: 'g' },
       { name: 'Soy Sauce', normalizedName: 'soy sauce', amount: 3, unit: 'tbsp' },
@@ -683,7 +683,7 @@ export const RECIPES: Recipe[] = [
     servings: 3,
     dietaryTags: ['Vegetarian', 'Gluten-Free', 'High-Protein'],
     allergens: ['Eggs', 'Dairy'],
-    imageUrl: 'https://images.unsplash.com/photo-1590412200988-a436970781fa?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1590412200988-a436970781fa?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Eggs', normalizedName: 'egg', amount: 4, unit: 'piece' },
       { name: 'Canned Crushed Tomatoes', normalizedName: 'tomato', amount: 400, unit: 'g' },
@@ -730,7 +730,7 @@ export const RECIPES: Recipe[] = [
     servings: 4,
     dietaryTags: ['Vegan', 'Vegetarian', 'Gluten-Free', 'Dairy-Free'],
     allergens: [],
-    imageUrl: 'https://images.unsplash.com/photo-1541832676-9b763b0239ab?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1541832676-9b763b0239ab?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Chickpeas (Cooked or Canned)', normalizedName: 'chickpeas', amount: 400, unit: 'g' },
       { name: 'Sweet Potato (Cubed)', normalizedName: 'potato', amount: 1, unit: 'large' },
@@ -771,7 +771,7 @@ export const RECIPES: Recipe[] = [
     servings: 4,
     dietaryTags: ['High-Protein', 'Gluten-Free', 'Dairy-Free'],
     allergens: [],
-    imageUrl: 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Chicken Thighs or Breasts', normalizedName: 'chicken', amount: 600, unit: 'g' },
       { name: 'Potatoes (Wedges)', normalizedName: 'potato', amount: 500, unit: 'g' },
@@ -809,7 +809,7 @@ export const RECIPES: Recipe[] = [
     servings: 2,
     dietaryTags: ['Vegetarian', 'Gluten-Free'],
     allergens: ['Dairy'],
-    imageUrl: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Cucumbers (Chunky slices)', normalizedName: 'cucumber', amount: 2, unit: 'medium' },
       { name: 'Tomatoes (Cut into wedges)', normalizedName: 'tomato', amount: 3, unit: 'medium' },
@@ -849,7 +849,7 @@ export const RECIPES: Recipe[] = [
     servings: 4,
     dietaryTags: ['Vegan', 'Vegetarian', 'Gluten-Free', 'Dairy-Free'],
     allergens: [],
-    imageUrl: 'https://images.unsplash.com/photo-1572453800999-e8d2d1589b7c?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1572453800999-e8d2d1589b7c?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Zucchini (Sliced thin)', normalizedName: 'zucchini', amount: 2, unit: 'medium' },
       { name: 'Eggplant (Sliced thin)', normalizedName: 'eggplant', amount: 1, unit: 'medium' },
@@ -895,7 +895,7 @@ export const RECIPES: Recipe[] = [
     servings: 3,
     dietaryTags: ['Vegetarian'],
     allergens: ['Dairy', 'Eggs', 'Gluten'],
-    imageUrl: 'https://images.unsplash.com/photo-1528207776546-365bb710ee93?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1528207776546-365bb710ee93?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'All-Purpose Flour', normalizedName: 'flour', amount: 200, unit: 'g' },
       { name: 'Milk or Buttermilk', normalizedName: 'milk', amount: 250, unit: 'ml' },
@@ -940,7 +940,7 @@ export const RECIPES: Recipe[] = [
     servings: 1,
     dietaryTags: ['Vegetarian', 'High-Protein'],
     allergens: ['Eggs', 'Gluten'],
-    imageUrl: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Sourdough Bread', normalizedName: 'bread', amount: 2, unit: 'slice' },
       { name: 'Ripe Avocado', normalizedName: 'avocado', amount: 1, unit: 'piece' },
@@ -985,7 +985,7 @@ export const RECIPES: Recipe[] = [
     servings: 2,
     dietaryTags: ['Vegetarian', 'Gluten-Free', 'High-Protein'],
     allergens: ['Dairy'],
-    imageUrl: 'https://images.unsplash.com/photo-1567184109411-b28f270a23e2?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1567184109411-b28f270a23e2?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Paneer (Crumbled)', normalizedName: 'paneer', amount: 250, unit: 'g' },
       { name: 'Onion (Finely chopped)', normalizedName: 'onion', amount: 1, unit: 'medium' },
@@ -1030,7 +1030,7 @@ export const RECIPES: Recipe[] = [
     servings: 4,
     dietaryTags: ['Vegan', 'Vegetarian', 'Gluten-Free', 'Dairy-Free'],
     allergens: [],
-    imageUrl: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Toor Dal (Yellow Lentils)', normalizedName: 'lentils', amount: 150, unit: 'g' },
       { name: 'Carrot or Drumstick', normalizedName: 'carrot', amount: 1, unit: 'medium' },
@@ -1075,7 +1075,7 @@ export const RECIPES: Recipe[] = [
     servings: 4,
     dietaryTags: ['Vegetarian', 'Gluten-Free'],
     allergens: ['Dairy'],
-    imageUrl: 'https://images.unsplash.com/photo-1516714435131-44d6b64dc6a2?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1516714435131-44d6b64dc6a2?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Basmati Rice', normalizedName: 'rice', amount: 300, unit: 'g' },
       { name: 'Ghee or Oil', normalizedName: 'butter', amount: 2, unit: 'tbsp' },
@@ -1118,7 +1118,7 @@ export const RECIPES: Recipe[] = [
     servings: 3,
     dietaryTags: ['Vegetarian', 'Gluten-Free', 'High-Protein'],
     allergens: ['Dairy'],
-    imageUrl: 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Paneer (Large cubes)', normalizedName: 'paneer', amount: 350, unit: 'g' },
       { name: 'Bell Pepper (Cut in chunks)', normalizedName: 'bell pepper', amount: 1, unit: 'large' },
@@ -1158,7 +1158,7 @@ export const RECIPES: Recipe[] = [
     servings: 2,
     dietaryTags: ['Gluten-Free', 'High-Protein'],
     allergens: ['Shellfish'],
-    imageUrl: 'https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Shrimp (Peeled & deveined)', normalizedName: 'shrimp', amount: 350, unit: 'g' },
       { name: 'Extra Virgin Olive Oil', normalizedName: 'olive oil', amount: 4, unit: 'tbsp' },
@@ -1201,7 +1201,7 @@ export const RECIPES: Recipe[] = [
     servings: 4,
     dietaryTags: ['Vegetarian', 'Gluten-Free', 'Dairy-Free'],
     allergens: ['Eggs'],
-    imageUrl: 'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Potatoes (Thinly sliced)', normalizedName: 'potato', amount: 500, unit: 'g' },
       { name: 'Yellow Onion (Thinly sliced)', normalizedName: 'onion', amount: 1, unit: 'large' },
@@ -1243,7 +1243,7 @@ export const RECIPES: Recipe[] = [
     servings: 2,
     dietaryTags: ['High-Protein', 'Dairy-Free', 'Gluten-Free'],
     allergens: ['Soy'],
-    imageUrl: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Flat Rice Noodles', normalizedName: 'rice noodles', amount: 200, unit: 'g' },
       { name: 'Beef (Sirloin thinly sliced)', normalizedName: 'beef', amount: 250, unit: 'g' },
@@ -1288,7 +1288,7 @@ export const RECIPES: Recipe[] = [
     servings: 2,
     dietaryTags: ['Vegetarian', 'Gluten-Free'],
     allergens: ['Dairy'],
-    imageUrl: 'https://images.unsplash.com/photo-1592417817098-8f3d6ef2256c?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1592417817098-8f3d6ef2256c?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Ripe Heirloom Tomatoes', normalizedName: 'tomato', amount: 3, unit: 'medium' },
       { name: 'Fresh Mozzarella Cheese', normalizedName: 'cheese', amount: 200, unit: 'g' },
@@ -1324,7 +1324,7 @@ export const RECIPES: Recipe[] = [
     servings: 2,
     dietaryTags: ['Vegetarian', 'Dairy-Free'],
     allergens: ['Eggs', 'Soy'],
-    imageUrl: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Cold Cooked Rice', normalizedName: 'rice', amount: 350, unit: 'g' },
       { name: 'Eggs (Beaten)', normalizedName: 'egg', amount: 3, unit: 'piece' },
@@ -1367,7 +1367,7 @@ export const RECIPES: Recipe[] = [
     servings: 3,
     dietaryTags: ['Vegetarian', 'Gluten-Free'],
     allergens: ['Dairy'],
-    imageUrl: 'https://images.unsplash.com/photo-1633964913295-ceb43826e7c9?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1633964913295-ceb43826e7c9?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Arborio Rice', normalizedName: 'rice', amount: 200, unit: 'g' },
       { name: 'Mushrooms (Sliced)', normalizedName: 'mushroom', amount: 300, unit: 'g' },
@@ -1412,7 +1412,7 @@ export const RECIPES: Recipe[] = [
     servings: 2,
     dietaryTags: ['Vegan', 'Vegetarian', 'Gluten-Free', 'Dairy-Free', 'High-Protein'],
     allergens: [],
-    imageUrl: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Chickpeas (Cooked or Canned)', normalizedName: 'chickpeas', amount: 300, unit: 'g' },
       { name: 'Avocado (Diced)', normalizedName: 'avocado', amount: 1, unit: 'large' },
@@ -1450,7 +1450,7 @@ export const RECIPES: Recipe[] = [
     servings: 2,
     dietaryTags: ['Vegetarian'],
     allergens: ['Dairy', 'Eggs', 'Gluten'],
-    imageUrl: 'https://images.unsplash.com/photo-1484723091739-0045615b119a?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1484723091739-0045615b119a?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Thick Brioche or Sourdough Bread', normalizedName: 'bread', amount: 4, unit: 'slice' },
       { name: 'Eggs', normalizedName: 'egg', amount: 2, unit: 'piece' },
@@ -1492,7 +1492,7 @@ export const RECIPES: Recipe[] = [
     servings: 2,
     dietaryTags: ['Vegetarian', 'Gluten-Free'],
     allergens: ['Dairy'],
-    imageUrl: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Potatoes (Grated)', normalizedName: 'potato', amount: 500, unit: 'g' },
       { name: 'Butter', normalizedName: 'butter', amount: 30, unit: 'g' },
@@ -1533,7 +1533,7 @@ export const RECIPES: Recipe[] = [
     servings: 1,
     dietaryTags: ['Vegetarian', 'Gluten-Free', 'High-Protein'],
     allergens: ['Eggs', 'Dairy'],
-    imageUrl: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Eggs', normalizedName: 'egg', amount: 3, unit: 'piece' },
       { name: 'Onion (Finely diced)', normalizedName: 'onion', amount: 0.5, unit: 'medium' },
@@ -1571,7 +1571,7 @@ export const RECIPES: Recipe[] = [
     servings: 4,
     dietaryTags: ['Vegan', 'Vegetarian', 'Gluten-Free', 'Dairy-Free', 'High-Protein'],
     allergens: [],
-    imageUrl: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Yellow Lentils', normalizedName: 'lentils', amount: 200, unit: 'g' },
       { name: 'Fresh Spinach (Roughly chopped)', normalizedName: 'spinach', amount: 300, unit: 'g' },
@@ -1609,7 +1609,7 @@ export const RECIPES: Recipe[] = [
     servings: 2,
     dietaryTags: ['Dairy-Free'],
     allergens: ['Eggs', 'Soy'],
-    imageUrl: 'https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Cooked Jasmine Rice (Chilled)', normalizedName: 'rice', amount: 350, unit: 'g' },
       { name: 'Eggs', normalizedName: 'egg', amount: 2, unit: 'piece' },
@@ -1654,7 +1654,7 @@ export const RECIPES: Recipe[] = [
     servings: 2,
     dietaryTags: ['Vegetarian'],
     allergens: ['Dairy', 'Gluten'],
-    imageUrl: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=480&q=65',
     ingredients: [
       { name: 'Pasta (Spaghetti or Fettuccine)', normalizedName: 'pasta', amount: 200, unit: 'g' },
       { name: 'Butter', normalizedName: 'butter', amount: 40, unit: 'g' },
