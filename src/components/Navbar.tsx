@@ -1,8 +1,18 @@
 import React, { useState } from 'react';
+import {
+  LayoutDashboard,
+  BookOpen,
+  ShoppingBag,
+  Calendar,
+  Sparkles,
+  Heart,
+  Camera,
+  Bell,
+  ChevronDown,
+} from 'lucide-react';
 import { AppView, InventoryItem } from '../types';
 import { getExpiryStatus } from '../services/matching';
-import { isSupabaseConfigured } from '../services/supabase';
-import { AiSparkleBadge } from './AiSparkleIcon';
+import { BrandLogo } from './BrandLogo';
 
 interface NavbarProps {
   currentView: AppView;
@@ -24,15 +34,13 @@ export const Navbar: React.FC<NavbarProps> = ({
     (item) => getExpiryStatus(item.expiryDate).status === 'expiring_soon'
   ).length;
 
-  const isSupabase = isSupabaseConfigured();
-
-  const navItems: { id: AppView; label: string; badge?: number; alertDot?: boolean }[] = [
-    { id: 'dashboard', label: 'Dashboard' },
-    { id: 'recipes', label: 'Recipes' },
-    { id: 'inventory', label: 'Kitchen', badge: inventory.length > 0 ? inventory.length : undefined },
-    { id: 'expiry', label: 'Expiry', alertDot: expiringCount > 0 },
-    { id: 'assistant', label: 'AI Chef' },
-    { id: 'favorites', label: 'Saved', badge: favoritesCount > 0 ? favoritesCount : undefined },
+  const navItems = [
+    { id: 'dashboard' as AppView, label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'recipes' as AppView, label: 'Recipes', icon: BookOpen },
+    { id: 'inventory' as AppView, label: 'My Kitchen', icon: ShoppingBag },
+    { id: 'expiry' as AppView, label: 'Expiry', icon: Calendar, hasAlert: expiringCount > 0 },
+    { id: 'assistant' as AppView, label: 'AI Chef', icon: Sparkles },
+    { id: 'favorites' as AppView, label: 'Saved', icon: Heart, badge: favoritesCount > 0 ? favoritesCount : undefined },
   ];
 
   const handleNav = (view: AppView) => {
@@ -41,127 +49,110 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-[#FBFBFA]/90 backdrop-blur-xl border-b border-black/[0.06] transition-all">
+    <header className="sticky top-0 z-50 bg-[#FAF7F2]/95 backdrop-blur-md border-b border-[#EBE6DD]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Brand Logo & Mark */}
+        <div className="flex items-center justify-between h-18">
+          {/* Brand Logo & Title */}
           <div
             onClick={() => handleNav('landing')}
-            className="flex items-center gap-3 cursor-pointer group select-none"
+            className="flex items-center gap-3 cursor-pointer select-none group"
           >
-            <AiSparkleBadge size="md" className="group-hover:scale-105 transition-transform" />
+            <BrandLogo />
             <div className="flex flex-col">
-              <div className="flex items-center gap-1.5">
-                <span className="font-bold text-base tracking-tight text-stone-900">
+              <div className="flex items-center">
+                <span className="font-bold text-lg text-stone-900 tracking-tight">
                   Smart Kitchen
                 </span>
-                <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded-full uppercase tracking-wider">
+                <span className="text-[11px] font-bold bg-[#F5EAD9] text-[#97602D] px-2 py-0.5 rounded-md ml-1.5 uppercase">
                   AI
                 </span>
               </div>
-              <span className="text-[10px] text-stone-600 hidden md:inline tracking-normal font-medium">
+              <span className="text-[11px] text-stone-500 font-medium tracking-normal -mt-0.5">
                 Culinary Intelligence
               </span>
             </div>
           </div>
 
-          {/* Desktop Minimalist Text Navigation */}
-          <nav className="hidden lg:flex items-center gap-1 bg-stone-100/70 p-1 rounded-xl border border-black/[0.04]">
+          {/* Desktop Navigation Tabs */}
+          <nav className="hidden lg:flex items-center gap-1">
             {navItems.map((item) => {
+              const Icon = item.icon;
               const isActive = currentView === item.id;
               return (
                 <button
                   key={item.id}
                   onClick={() => handleNav(item.id)}
-                  className={`relative px-3.5 py-1.5 rounded-lg text-xs font-semibold tracking-tight transition-all flex items-center gap-1.5 select-none ${
+                  className={`flex items-center gap-2 px-3.5 py-1.5 text-xs transition-all select-none ${
                     isActive
-                      ? 'bg-stone-900 text-white shadow-xs'
-                      : 'text-stone-600 hover:text-stone-950 hover:bg-white/80'
+                      ? 'bg-[#DDEAE1] text-[#163828] font-bold rounded-full shadow-xs'
+                      : 'text-stone-700 hover:text-[#163828] hover:bg-stone-200/40 rounded-full font-medium'
                   }`}
                 >
+                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#163828]' : 'text-stone-500'}`} />
                   <span>{item.label}</span>
 
-                  {item.badge !== undefined && (
-                    <span
-                      className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                        isActive
-                          ? 'bg-white/20 text-white'
-                          : 'bg-stone-200 text-stone-700'
-                      }`}
-                    >
-                      {item.badge}
-                    </span>
+                  {item.hasAlert && (
+                    <span className="w-2 h-2 rounded-full bg-[#E67E22] -ml-0.5" />
                   )}
 
-                  {item.alertDot && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                  {item.badge !== undefined && (
+                    <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-stone-200 text-stone-700 font-bold">
+                      {item.badge}
+                    </span>
                   )}
                 </button>
               );
             })}
           </nav>
 
-          {/* Right Action Bar */}
-          <div className="flex items-center gap-2">
-            {/* Direct Scan CTA Button */}
+          {/* Right Action Controls */}
+          <div className="flex items-center gap-3">
+            {/* Scan Ingredients Button */}
             <button
               onClick={() => handleNav('scanner')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 ${
-                currentView === 'scanner'
-                  ? 'bg-amber-600 text-white'
-                  : 'bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 active:scale-95'
-              }`}
+              className="flex items-center gap-2 bg-[#163828] hover:bg-[#122D20] text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-xs active:scale-95 transition-all"
             >
-              <span>+ Scan Food</span>
+              <Camera className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Scan Ingredients</span>
+              <span className="sm:hidden">Scan</span>
             </button>
 
-            {/* Supabase Status Pill */}
+            {/* Notification Bell */}
             <button
-              onClick={() => handleNav('settings')}
-              title={isSupabase ? 'Cloud Sync Active (Supabase)' : 'Offline Local Storage (Click to connect Cloud)'}
-              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-medium rounded-lg border border-black/[0.06] bg-white text-stone-600 hover:bg-stone-50 transition-colors"
+              onClick={() => handleNav('expiry')}
+              title="Notifications"
+              className="relative p-2 text-stone-600 hover:text-stone-900 rounded-full hover:bg-stone-200/50 transition-colors"
             >
-              <span
-                className={`w-2 h-2 rounded-full ${
-                  isSupabase ? 'bg-emerald-500' : 'bg-stone-400'
-                }`}
+              <Bell className="w-4 h-4" />
+              {expiringCount > 0 && (
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#E67E22]" />
+              )}
+            </button>
+
+            {/* Profile Avatar (No Auth Required) */}
+            <div
+              onClick={() => handleNav('settings')}
+              className="flex items-center gap-1.5 cursor-pointer pl-1 py-1 pr-2 rounded-full hover:bg-stone-200/50 transition-colors"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
+                alt="Chef Profile"
+                className="w-7 h-7 rounded-full object-cover border border-stone-300"
               />
-              <span>{isSupabase ? 'Cloud' : 'Local'}</span>
-            </button>
-
-            {/* Settings Link */}
-            <button
-              onClick={() => handleNav('settings')}
-              className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-colors ${
-                currentView === 'settings'
-                  ? 'bg-stone-900 text-white border-stone-900'
-                  : 'border-black/[0.06] bg-white text-stone-700 hover:bg-stone-50'
-              }`}
-            >
-              Settings
-            </button>
+              <ChevronDown className="w-3.5 h-3.5 text-stone-500" />
+            </div>
 
             {/* Mobile Hamburger Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle Navigation Menu"
-              className="lg:hidden p-2 rounded-lg border border-black/[0.06] bg-white text-stone-700 hover:bg-stone-100 transition-colors flex flex-col justify-center items-center w-9 h-9 gap-1"
+              className="lg:hidden p-2 rounded-lg text-stone-700 hover:bg-stone-200/50"
+              aria-label="Menu"
             >
-              <span
-                className={`w-4 h-0.5 bg-stone-800 transition-transform ${
-                  mobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''
-                }`}
-              />
-              <span
-                className={`w-4 h-0.5 bg-stone-800 transition-opacity ${
-                  mobileMenuOpen ? 'opacity-0' : ''
-                }`}
-              />
-              <span
-                className={`w-4 h-0.5 bg-stone-800 transition-transform ${
-                  mobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''
-                }`}
-              />
+              <div className="w-5 h-4 flex flex-col justify-between">
+                <span className={`w-full h-0.5 bg-stone-800 transition-transform ${mobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`} />
+                <span className={`w-full h-0.5 bg-stone-800 ${mobileMenuOpen ? 'opacity-0' : ''}`} />
+                <span className={`w-full h-0.5 bg-stone-800 transition-transform ${mobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`} />
+              </div>
             </button>
           </div>
         </div>
@@ -169,50 +160,44 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-b border-black/[0.06] bg-[#FBFBFA]/98 backdrop-blur-2xl px-4 pt-3 pb-5 space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
-          <div className="grid grid-cols-2 gap-2 pb-2">
+        <div className="lg:hidden border-t border-[#EBE6DD] bg-[#FAF7F2] px-4 pt-3 pb-5 space-y-2 animate-in fade-in slide-in-from-top-2 duration-150">
+          <div className="grid grid-cols-2 gap-2">
             {navItems.map((item) => {
+              const Icon = item.icon;
               const isActive = currentView === item.id;
               return (
                 <button
                   key={item.id}
                   onClick={() => handleNav(item.id)}
-                  className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold ${
                     isActive
-                      ? 'bg-stone-900 text-white shadow-xs'
-                      : 'bg-white border border-black/[0.05] text-stone-700 hover:bg-stone-100'
+                      ? 'bg-[#DDEAE1] text-[#163828]'
+                      : 'bg-white border border-[#EBE6DD] text-stone-700'
                   }`}
                 >
-                  <span>{item.label}</span>
+                  <div className="flex items-center gap-2">
+                    <Icon className="w-4 h-4 text-[#163828]" />
+                    <span>{item.label}</span>
+                  </div>
+                  {item.hasAlert && (
+                    <span className="w-2 h-2 rounded-full bg-[#E67E22]" />
+                  )}
                   {item.badge !== undefined && (
-                    <span
-                      className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                        isActive ? 'bg-white/20 text-white' : 'bg-stone-200 text-stone-700'
-                      }`}
-                    >
+                    <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-stone-200 text-stone-700">
                       {item.badge}
                     </span>
-                  )}
-                  {item.alertDot && (
-                    <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                   )}
                 </button>
               );
             })}
           </div>
-
-          <div className="pt-2 border-t border-black/[0.06] flex items-center justify-between gap-2">
+          <div className="pt-2">
             <button
               onClick={() => handleNav('scanner')}
-              className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs font-bold text-center shadow-xs"
+              className="w-full flex items-center justify-center gap-2 bg-[#163828] text-white py-3 rounded-full text-xs font-semibold shadow-xs"
             >
-              + Scan Food
-            </button>
-            <button
-              onClick={() => handleNav('settings')}
-              className="px-4 py-2.5 rounded-xl bg-white border border-black/[0.06] text-stone-700 text-xs font-semibold"
-            >
-              Settings
+              <Camera className="w-4 h-4" />
+              <span>Scan Ingredients</span>
             </button>
           </div>
         </div>

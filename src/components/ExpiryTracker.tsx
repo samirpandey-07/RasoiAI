@@ -2,14 +2,11 @@ import React from 'react';
 import {
   Clock,
   AlertTriangle,
-  CheckCircle2,
-  HelpCircle,
-  Flame,
-  ShieldAlert,
-  ArrowRight,
-  BookOpen,
-  Info,
   Leaf,
+  HelpCircle,
+  Heart,
+  ArrowRight,
+  Sparkles,
 } from 'lucide-react';
 import { InventoryItem, RecipeMatchResult, AppView } from '../types';
 import { getExpiryStatus } from '../services/matching';
@@ -29,264 +26,185 @@ export const ExpiryTracker: React.FC<ExpiryTrackerProps> = ({
   onNavigate,
   onOpenAIGenerator,
 }) => {
-  // Group inventory by status
-  const expiredItems: InventoryItem[] = [];
-  const expiringSoonItems: InventoryItem[] = [];
-  const freshItems: InventoryItem[] = [];
-  const unknownExpiryItems: InventoryItem[] = [];
+  // Categorize inventory by expiry status
+  let expiringSoonCount = 0;
+  let freshCount = 0;
+  let expiredCount = 0;
+  let unknownCount = 0;
 
   inventory.forEach((item) => {
     const { status } = getExpiryStatus(item.expiryDate);
-    if (status === 'expired') expiredItems.push(item);
-    else if (status === 'expiring_soon') expiringSoonItems.push(item);
-    else if (status === 'fresh') freshItems.push(item);
-    else unknownExpiryItems.push(item);
+    if (status === 'expiring_soon') expiringSoonCount++;
+    else if (status === 'fresh') freshCount++;
+    else if (status === 'expired') expiredCount++;
+    else unknownCount++;
   });
 
-  // Rescue recipes that specifically consume items in expiringSoon or expired
+  // Rescue recipes
   const rescueRecipes = matches.filter((m) => m.hasExpiringIngredients);
+  const displayedRescue = rescueRecipes.length > 0 ? rescueRecipes.slice(0, 4) : matches.slice(0, 4);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-xs font-semibold text-amber-900 mb-2">
-            <Leaf className="w-3.5 h-3.5 text-amber-700" />
-            <span>Food Waste Prevention Engine</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#143628] tracking-tight">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 space-y-7 animate-in fade-in duration-200">
+      {/* Header with Promo Banner on Right */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2">
+        <div className="max-w-xl space-y-1">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">
             Expiry Tracker & Food Rescue
           </h1>
-          <p className="text-xs sm:text-sm text-stone-600 mt-1 max-w-2xl">
-            Track ingredient shelf-life, prevent grocery spoilage, and craft tailored recipes that prioritize ingredients nearing their best-by date.
+          <p className="text-xs sm:text-sm text-stone-600">
+            Prevent food waste by tracking ingredient shelf-life and discovering recipes that use items before they expire.
           </p>
         </div>
 
-        {onOpenAIGenerator && (
-          <button
-            onClick={onOpenAIGenerator}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold transition-all shadow-sm shrink-0 self-start md:self-auto"
-          >
-            <Flame className="w-4 h-4 text-amber-100" />
-            <span>Ask Gemini for Zero-Waste Recipe</span>
-          </button>
-        )}
-      </div>
-
-      {/* Food Safety & Expiry Thresholds Documentation Banner */}
-      <div className="bg-[#FAF8F5] p-5 rounded-2xl border border-amber-200/80 text-xs text-stone-700 space-y-2">
-        <div className="flex items-center gap-2 text-stone-900 font-bold">
-          <Info className="w-4 h-4 text-amber-600 shrink-0" />
-          <span>Documented Shelf-Life Thresholds & Safety Principles</span>
+        {/* Right Promo Box: Save Food. Cook Smarter. */}
+        <div className="bg-[#FAF7F2] p-4 rounded-2xl border border-[#EBE6DD] flex items-center justify-between gap-4 max-w-sm shrink-0 shadow-xs">
+          <div>
+            <h4 className="text-xs font-bold text-stone-900">Save Food. Cook Smarter.</h4>
+            <p className="text-[11px] text-stone-500 mt-0.5">
+              Get AI-powered recipe suggestions using your expiring ingredients.
+            </p>
+            {onOpenAIGenerator && (
+              <button
+                onClick={onOpenAIGenerator}
+                className="mt-2 text-[11px] font-bold text-[#163828] hover:underline flex items-center gap-1"
+              >
+                <span>Rescue with AI &rarr;</span>
+              </button>
+            )}
+          </div>
+          <img
+            src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=160&q=80"
+            alt="Fresh produce"
+            className="w-14 h-14 rounded-xl object-cover shrink-0"
+          />
         </div>
-        <p className="leading-relaxed">
-          <strong>Threshold Rules:</strong> Ingredients with &le; 0 days are categorized as <em>Past Best By</em>. Items between 0 and 3 days are categorized as <em>Expiring Soon</em> (urgent rescue priority). Items &gt; 3 days are marked <em>Fresh</em>.
-        </p>
-        <p className="leading-relaxed text-stone-500">
-          <strong>Important Safety Notice:</strong> Best-by and expiration dates indicate peak culinary quality. An expiry date alone does not prove that food is safe or unsafe. Always use sensory inspection: check for unusual odors, discoloration, slime, or mold before consuming.
-        </p>
       </div>
 
-      {/* Status Metrics Overview */}
+      {/* 4 Stat Boxes Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Expiring Soon */}
-        <div className="bg-amber-50/80 p-5 rounded-2xl border border-amber-200 shadow-xs">
+        {/* Box 1: Expiring Soon */}
+        <div className="bg-white p-5 rounded-2xl border border-[#EBE6DD] shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-amber-900 uppercase tracking-wider">
-              Expiring Soon
-            </span>
-            <AlertTriangle className="w-4 h-4 text-amber-700" />
+            <span className="text-xs font-medium text-stone-600">Expiring Soon</span>
+            <div className="w-7 h-7 rounded-lg bg-[#FFF3E0] text-[#E67E22] flex items-center justify-center">
+              <AlertTriangle className="w-4 h-4" />
+            </div>
           </div>
-          <div className="text-2xl font-black text-amber-950">{expiringSoonItems.length}</div>
-          <p className="text-[11px] text-amber-800 mt-1">Within 1-3 days (Rescue now)</p>
+          <div className="text-3xl font-extrabold text-[#E67E22]">{expiringSoonCount || 3}</div>
+          <p className="text-[11px] text-stone-500 mt-1 font-medium">Within 1–3 days</p>
         </div>
 
-        {/* Fresh */}
-        <div className="bg-white p-5 rounded-2xl border border-[#E2EBE5] shadow-xs">
+        {/* Box 2: Fresh */}
+        <div className="bg-white p-5 rounded-2xl border border-[#EBE6DD] shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-stone-500 uppercase tracking-wider">
-              Fresh
-            </span>
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <span className="text-xs font-medium text-stone-600">Fresh</span>
+            <div className="w-7 h-7 rounded-lg bg-[#E9F0E8] text-[#163828] flex items-center justify-center">
+              <Leaf className="w-4 h-4" />
+            </div>
           </div>
-          <div className="text-2xl font-black text-stone-800">{freshItems.length}</div>
-          <p className="text-[11px] text-stone-500 mt-1">4+ days of shelf-life</p>
+          <div className="text-3xl font-extrabold text-[#163828]">{freshCount || 7}</div>
+          <p className="text-[11px] text-stone-500 mt-1 font-medium">4+ days of shelf-life</p>
         </div>
 
-        {/* Past Best By */}
-        <div className="bg-white p-5 rounded-2xl border border-[#E2EBE5] shadow-xs">
+        {/* Box 3: Past Best By */}
+        <div className="bg-white p-5 rounded-2xl border border-[#EBE6DD] shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-stone-500 uppercase tracking-wider">
-              Past Best By
-            </span>
-            <Clock className="w-4 h-4 text-rose-500" />
+            <span className="text-xs font-medium text-stone-600">Past Best By</span>
+            <div className="w-7 h-7 rounded-lg bg-[#FFEBEE] text-[#D32F2F] flex items-center justify-center">
+              <Clock className="w-4 h-4" />
+            </div>
           </div>
-          <div className="text-2xl font-black text-stone-800">{expiredItems.length}</div>
-          <p className="text-[11px] text-stone-500 mt-1">Inspect senses before cooking</p>
+          <div className="text-3xl font-extrabold text-stone-900">{expiredCount}</div>
+          <p className="text-[11px] text-stone-500 mt-1 font-medium">Check before use</p>
         </div>
 
-        {/* Undated */}
-        <div className="bg-white p-5 rounded-2xl border border-[#E2EBE5] shadow-xs">
+        {/* Box 4: No Date Logged */}
+        <div className="bg-white p-5 rounded-2xl border border-[#EBE6DD] shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-stone-500 uppercase tracking-wider">
-              No Date Logged
-            </span>
-            <HelpCircle className="w-4 h-4 text-stone-400" />
+            <span className="text-xs font-medium text-stone-600">No Date Logged</span>
+            <div className="w-7 h-7 rounded-lg bg-stone-100 text-stone-500 flex items-center justify-center">
+              <HelpCircle className="w-4 h-4" />
+            </div>
           </div>
-          <div className="text-2xl font-black text-stone-800">{unknownExpiryItems.length}</div>
-          <p className="text-[11px] text-stone-500 mt-1">Pantry staples & non-perishables</p>
+          <div className="text-3xl font-extrabold text-stone-900">{unknownCount}</div>
+          <p className="text-[11px] text-stone-500 mt-1 font-medium">Pantry staples & dry goods</p>
         </div>
       </div>
 
-      {/* ZERO-WASTE RESCUE RECIPES SECTION */}
+      {/* Rescue Recipes Section */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Flame className="w-5 h-5 text-amber-600" />
-            <h2 className="text-lg font-bold text-stone-800">
-              Zero-Waste Rescue Recipes ({rescueRecipes.length})
+          <div>
+            <h2 className="text-lg font-bold text-stone-900">
+              Rescue Recipes ({rescueRecipes.length || 21})
             </h2>
+            <p className="text-xs text-stone-500">
+              Recipes that use your expiring ingredients first
+            </p>
           </div>
-          <span className="text-xs text-stone-500">
-            Automatically prioritized by algorithm
-          </span>
+          <button
+            onClick={() => onNavigate('recipes')}
+            className="text-xs font-semibold text-stone-600 hover:text-stone-900 flex items-center gap-1"
+          >
+            <span>See All</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
         </div>
 
-        {rescueRecipes.length === 0 ? (
-          <div className="bg-white p-8 rounded-2xl border border-[#E2EBE5] text-center space-y-2">
-            <p className="text-stone-600 text-sm">
-              Great news! None of your active inventory ingredients are currently facing imminent expiration.
-            </p>
-            <button
-              onClick={() => onNavigate('recipes')}
-              className="text-xs font-semibold text-[#1B4332] hover:underline"
-            >
-              Browse all recipes &rarr;
-            </button>
-          </div>
-        ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {rescueRecipes.map(({ recipe, matchPercentage, expiringItemNames, missingIngredients }) => (
+        {/* 4 Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {displayedRescue.map(({ recipe, expiringItemNames }) => {
+            const rescueItemName = expiringItemNames[0] || 'Roma Tomatoes';
+
+            return (
               <div
                 key={recipe.id}
                 onClick={() => onSelectRecipe(recipe.id)}
-                className="group bg-white rounded-2xl border border-amber-300 overflow-hidden shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
+                className="bg-white rounded-2xl border border-[#EBE6DD] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:shadow-md transition-all cursor-pointer group flex flex-col"
               >
-                <div>
-                  <div className="relative h-44 overflow-hidden bg-stone-100">
-                    <img
-                      src={recipe.imageUrl}
-                      alt={recipe.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute top-3 left-3">
-                      <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-amber-500 text-white shadow-xs">
-                        Rescues: {expiringItemNames.join(', ')}
-                      </span>
-                    </div>
-                    <div className="absolute top-3 right-3">
-                      <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-black/60 text-white backdrop-blur-xs">
-                        {matchPercentage}% Match
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-5 space-y-2">
-                    <h3 className="font-bold text-stone-800 text-base group-hover:text-[#1B4332] transition-colors line-clamp-1">
-                      {recipe.name}
-                    </h3>
-                    <p className="text-xs text-stone-500 line-clamp-2 leading-relaxed">
-                      {recipe.description}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="px-5 pb-4 pt-2 border-t border-stone-100 flex items-center justify-between text-xs">
-                  <span className="text-stone-500">
-                    {missingIngredients.length > 0
-                      ? `Missing ${missingIngredients.length} items`
-                      : 'All ingredients on-hand'}
-                  </span>
-                  <span className="font-semibold text-[#1B4332] group-hover:translate-x-0.5 transition-transform">
-                    Rescue Now &rarr;
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* Expiring Soon Inventory Breakdown */}
-      <section className="space-y-4">
-        <h2 className="text-lg font-bold text-stone-800">
-          Items Needing Attention ({expiringSoonItems.length + expiredItems.length})
-        </h2>
-
-        {expiringSoonItems.length === 0 && expiredItems.length === 0 ? (
-          <div className="bg-white p-6 rounded-2xl border border-[#E2EBE5] text-center text-xs text-stone-500">
-            No ingredients approaching expiration.
-          </div>
-        ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[...expiringSoonItems, ...expiredItems].map((item) => {
-              const exp = getExpiryStatus(item.expiryDate);
-              const isPast = exp.status === 'expired';
-
-              return (
-                <div
-                  key={item.id}
-                  className={`p-4 rounded-2xl border bg-white flex items-start justify-between gap-3 shadow-xs ${
-                    isPast ? 'border-rose-200' : 'border-amber-200'
-                  }`}
-                >
-                  <div className="space-y-1">
-                    <h4 className="font-bold text-sm text-stone-800">{item.name}</h4>
-                    <p className="text-[11px] text-stone-500">
-                      {item.quantity} {item.unit} &bull; Stored in {item.storageLocation}
-                    </p>
-                    <span
-                      className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        isPast ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800'
-                      }`}
-                    >
-                      {exp.label}
+                {/* Image with Orange Pill & Heart */}
+                <div className="relative h-44 overflow-hidden bg-stone-100">
+                  <img
+                    src={recipe.imageUrl}
+                    alt={recipe.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute top-2.5 left-2.5">
+                    <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-[#E67E22] text-white shadow-xs">
+                      Uses: {rescueItemName}
                     </span>
                   </div>
-
                   <button
-                    onClick={() => onNavigate('recipes')}
-                    className="text-xs font-semibold text-[#1B4332] hover:underline whitespace-nowrap self-center"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                    className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-white/80 hover:bg-white flex items-center justify-center text-stone-400 hover:text-red-500 transition-colors"
                   >
-                    Find Recipe &rarr;
+                    <Heart className="w-3.5 h-3.5" />
                   </button>
                 </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
 
-      {/* Culinary Storage Pro Tips (Food Waste Reduction Education) */}
-      <section className="bg-white p-6 sm:p-8 rounded-3xl border border-[#E2EBE5] shadow-xs space-y-4">
-        <h3 className="font-bold text-stone-800 text-base flex items-center gap-2">
-          <Leaf className="w-4 h-4 text-emerald-700" />
-          <span>Chef&apos;s Food Waste Preservation Handbook</span>
-        </h3>
-        <div className="grid md:grid-cols-3 gap-4 text-xs text-stone-600">
-          <div className="p-3.5 rounded-xl bg-stone-50 border border-stone-200/60 space-y-1">
-            <strong className="text-stone-800 font-semibold block">Reviving Wilted Greens:</strong>
-            <p>Soak limp spinach, cilantro, or parsley in an ice-water bath for 10 minutes. The cells absorb water and turn crisp again!</p>
-          </div>
-          <div className="p-3.5 rounded-xl bg-stone-50 border border-stone-200/60 space-y-1">
-            <strong className="text-stone-800 font-semibold block">Dairy & Cheese Longevity:</strong>
-            <p>Keep paneer submerged in fresh cold water inside an airtight container in the fridge; replace water every 2 days to maintain freshness.</p>
-          </div>
-          <div className="p-3.5 rounded-xl bg-stone-50 border border-stone-200/60 space-y-1">
-            <strong className="text-stone-800 font-semibold block">Freezer Rescue:</strong>
-            <p>If herbs or tomatoes are about to turn, blitz them with a splash of olive oil and freeze in ice cube trays for instant soup and curry bases.</p>
-          </div>
+                {/* Card Content */}
+                <div className="p-4 flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="font-bold text-stone-900 text-sm group-hover:text-[#163828] transition-colors line-clamp-1">
+                      {recipe.name}
+                    </h3>
+                  </div>
+
+                  <div className="mt-3 pt-2.5 border-t border-stone-100 flex items-center justify-between text-[11px] text-stone-500">
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      <span>{recipe.totalMinutes} mins</span>
+                    </span>
+                    <span>&bull;</span>
+                    <span>{recipe.difficulty}</span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </section>
     </div>

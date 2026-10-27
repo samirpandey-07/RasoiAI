@@ -2,17 +2,11 @@ import React, { useState } from 'react';
 import {
   Plus,
   Search,
-  Filter,
+  Camera,
   Trash2,
-  Edit2,
-  AlertTriangle,
-  Clock,
-  Refrigerator,
-  Package,
-  Snowflake,
-  Sparkles,
-  Check,
+  Pencil,
   X,
+  Check,
 } from 'lucide-react';
 import {
   IngredientCategory,
@@ -29,15 +23,6 @@ interface KitchenInventoryProps {
   onNavigateToScanner: () => void;
 }
 
-const STORAGE_LOCATIONS: (StorageLocation | 'All')[] = [
-  'All',
-  'Fridge',
-  'Pantry',
-  'Freezer',
-  'Spice Rack',
-  'Countertop',
-];
-
 const CATEGORIES: IngredientCategory[] = [
   'Produce',
   'Dairy & Eggs',
@@ -51,6 +36,32 @@ const CATEGORIES: IngredientCategory[] = [
   'Other',
 ];
 
+const INGREDIENT_EMOJIS: Record<string, string> = {
+  spinach: '🥬',
+  paneer: '🧀',
+  tomato: '🍅',
+  onion: '🧅',
+  garlic: '🧄',
+  rice: '🌾',
+  'olive oil': '🫒',
+  egg: '🥚',
+  chicken: '🍗',
+  pasta: '🍝',
+  chickpeas: '🫘',
+  potato: '🥔',
+  ginger: '🫚',
+  milk: '🥛',
+  butter: '🧈',
+};
+
+function getIngredientEmoji(name: string): string {
+  const lower = name.toLowerCase();
+  for (const [key, emoji] of Object.entries(INGREDIENT_EMOJIS)) {
+    if (lower.includes(key)) return emoji;
+  }
+  return '🥗';
+}
+
 export const KitchenInventory: React.FC<KitchenInventoryProps> = ({
   inventory,
   onAddItem,
@@ -58,35 +69,57 @@ export const KitchenInventory: React.FC<KitchenInventoryProps> = ({
   onDeleteItem,
   onNavigateToScanner,
 }) => {
+  const [activeTab, setActiveTab] = useState<'All' | 'Fridge' | 'Pantry' | 'Freezer'>('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState<string>('All');
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>('All Categories');
+
+  // Modal State for Add / Edit
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
 
-  // Form states for Add / Edit
   const [formName, setFormName] = useState('');
   const [formCategory, setFormCategory] = useState<IngredientCategory>('Produce');
-  const [formQuantity, setFormQuantity] = useState<number>(1);
-  const [formUnit, setFormUnit] = useState('piece');
-  const [formLocation, setFormLocation] = useState<StorageLocation>('Fridge');
-  const [formExpiryDate, setFormExpiryDate] = useState('');
-  const [formNotes, setFormNotes] = useState('');
+  const [formQuantity, setFormQuantity] = useState(1);
+  const [formUnit, setFormUnit] = useState('g');
+  const [formStorage, setFormStorage] = useState<StorageLocation>('Fridge');
+  const [formExpiryDays, setFormExpiryDays] = useState(5);
 
-  const resetForm = () => {
+  const counts = {
+    All: inventory.length,
+    Fridge: inventory.filter((i) => i.storageLocation === 'Fridge').length,
+    Pantry: inventory.filter((i) => i.storageLocation === 'Pantry').length,
+    Freezer: inventory.filter((i) => i.storageLocation === 'Freezer').length,
+  };
+
+  const filteredItems = inventory.filter((item) => {
+    // Location Tab
+    if (activeTab !== 'All' && item.storageLocation !== activeTab) {
+      return false;
+    }
+
+    // Search
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      if (!item.name.toLowerCase().includes(q)) return false;
+    }
+
+    // Category
+    if (selectedCategory !== 'All Categories' && item.category !== selectedCategory) {
+      return false;
+    }
+
+    return true;
+  });
+
+  const handleOpenAdd = () => {
+    setEditingItem(null);
     setFormName('');
     setFormCategory('Produce');
     setFormQuantity(1);
     setFormUnit('piece');
-    setFormLocation('Fridge');
-    setFormExpiryDate('');
-    setFormNotes('');
-    setEditingItem(null);
-  };
-
-  const handleOpenAdd = () => {
-    resetForm();
-    setShowAddModal(true);
+    setFormStorage(activeTab === 'All' ? 'Fridge' : activeTab);
+    setFormExpiryDays(7);
+    setIsModalOpen(true);
   };
 
   const handleOpenEdit = (item: InventoryItem) => {
@@ -95,250 +128,215 @@ export const KitchenInventory: React.FC<KitchenInventoryProps> = ({
     setFormCategory(item.category);
     setFormQuantity(item.quantity);
     setFormUnit(item.unit);
-    setFormLocation(item.storageLocation);
-    setFormExpiryDate(item.expiryDate || '');
-    setFormNotes(item.notes || '');
-    setShowAddModal(true);
+    setFormStorage(item.storageLocation);
+
+    const diffDays = item.expiryDate
+      ? Math.ceil((new Date(item.expiryDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+      : 5;
+    setFormExpiryDays(diffDays > 0 ? diffDays : 1);
+    setIsModalOpen(true);
   };
 
-  const handleSubmitForm = (e: React.FormEvent) => {
+  const handleSaveItem = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formName.trim()) return;
+
+    const expDate = new Date();
+    expDate.setDate(expDate.getDate() + Number(formExpiryDays));
+    const expiryDateStr = expDate.toISOString().split('T')[0];
 
     if (editingItem) {
       onUpdateItem({
         ...editingItem,
         name: formName.trim(),
-        normalizedName: normalizeIngredientName(formName.trim()),
+        normalizedName: normalizeIngredientName(formName),
         category: formCategory,
-        quantity: formQuantity,
+        quantity: Number(formQuantity),
         unit: formUnit,
-        storageLocation: formLocation,
-        expiryDate: formExpiryDate || undefined,
-        notes: formNotes.trim() || undefined,
+        storageLocation: formStorage,
+        expiryDate: expiryDateStr,
       });
     } else {
-      const newItem: InventoryItem = {
-        id: `inv_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+      onAddItem({
+        id: `inv_${Date.now()}`,
         name: formName.trim(),
-        normalizedName: normalizeIngredientName(formName.trim()),
+        normalizedName: normalizeIngredientName(formName),
         category: formCategory,
-        quantity: formQuantity,
+        quantity: Number(formQuantity),
         unit: formUnit,
-        storageLocation: formLocation,
+        storageLocation: formStorage,
         purchaseDate: new Date().toISOString().split('T')[0],
-        expiryDate: formExpiryDate || undefined,
-        notes: formNotes.trim() || undefined,
-      };
-      onAddItem(newItem);
+        expiryDate: expiryDateStr,
+      });
     }
 
-    setShowAddModal(false);
-    resetForm();
+    setIsModalOpen(false);
   };
-
-  const handleQuantityAdjust = (item: InventoryItem, delta: number) => {
-    const newQty = Math.max(0, item.quantity + delta);
-    if (newQty === 0) {
-      if (confirm(`Remove ${item.name} from inventory?`)) {
-        onDeleteItem(item.id);
-      }
-    } else {
-      onUpdateItem({ ...item, quantity: newQty });
-    }
-  };
-
-  // Filter items
-  const filteredItems = inventory.filter((item) => {
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      if (!item.name.toLowerCase().includes(q) && !item.category.toLowerCase().includes(q)) {
-        return false;
-      }
-    }
-
-    if (selectedLocation !== 'All' && item.storageLocation !== selectedLocation) {
-      return false;
-    }
-
-    if (selectedCategory !== 'All' && item.category !== selectedCategory) {
-      return false;
-    }
-
-    return true;
-  });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 space-y-6 animate-in fade-in duration-200">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E2EBE5]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#143628] tracking-tight">
-            Kitchen Inventory
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">
+            My Kitchen Inventory
           </h1>
           <p className="text-xs sm:text-sm text-stone-600 mt-1">
-            Track ingredients across your fridge, pantry, and freezer with expiry management.
+            Track your ingredients, quantities and expiry dates across your fridge, pantry and freezer.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={onNavigateToScanner}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-stone-300 text-stone-700 text-xs font-semibold hover:bg-stone-50 transition-colors"
-          >
-            <span>Scan from Photo</span>
-          </button>
+        {/* Action Buttons */}
+        <div className="flex items-center gap-2.5">
           <button
             onClick={handleOpenAdd}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#1B4332] text-white text-xs font-semibold shadow-sm hover:bg-[#143628] transition-all"
+            className="flex items-center gap-1.5 bg-[#163828] hover:bg-[#122D20] text-white px-5 py-2.5 rounded-full text-xs font-semibold shadow-xs active:scale-95 transition-all"
           >
             <Plus className="w-4 h-4" />
             <span>Add Item</span>
           </button>
-        </div>
-      </div>
 
-      {/* Search and Storage Filter Pills */}
-      <div className="space-y-3">
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-3 w-4 h-4 text-stone-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search kitchen inventory by name or category..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-stone-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1B4332]/20 focus:border-[#1B4332]"
-            />
-          </div>
-
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            aria-label="Filter by category"
-            className="px-3.5 py-2.5 rounded-xl border border-stone-300 bg-white text-xs font-semibold text-stone-700 focus:outline-none"
-          >
-            <option value="All">All Categories</option>
-            {CATEGORIES.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Storage Location Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-          {STORAGE_LOCATIONS.map((loc) => (
-            <button
-              key={loc}
-              onClick={() => setSelectedLocation(loc)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
-                selectedLocation === loc
-                  ? 'bg-[#1B4332] text-white shadow-xs'
-                  : 'bg-white border border-[#E2EBE5] text-stone-700 hover:bg-[#F0F4F1]'
-              }`}
-            >
-              {loc}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Inventory Items Grid */}
-      {filteredItems.length === 0 ? (
-        <div className="bg-white p-12 rounded-2xl border border-[#E2EBE5] text-center space-y-3">
-          <Refrigerator className="w-10 h-10 text-stone-400 mx-auto" />
-          <h3 className="font-bold text-stone-800">No items match your criteria</h3>
-          <p className="text-xs text-stone-500 max-w-sm mx-auto">
-            Try adjusting your search query, or tap &quot;Add Item&quot; to log new groceries into your kitchen.
-          </p>
           <button
-            onClick={handleOpenAdd}
-            className="px-4 py-2 rounded-xl bg-[#1B4332] text-white text-xs font-semibold"
+            onClick={onNavigateToScanner}
+            className="flex items-center gap-1.5 bg-white border border-[#EBE6DD] hover:bg-stone-50 text-stone-800 px-4 py-2.5 rounded-full text-xs font-semibold shadow-xs transition-colors"
           >
-            Add New Item
+            <Camera className="w-4 h-4 text-stone-600" />
+            <span>Scan from Photo</span>
           </button>
         </div>
-      ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredItems.map((item) => {
+      </div>
+
+      {/* Filter Tabs: All, Fridge, Pantry, Freezer */}
+      <div className="flex items-center gap-2 border-b border-[#EBE6DD] pb-3">
+        {(['All', 'Fridge', 'Pantry', 'Freezer'] as const).map((tab) => {
+          const isActive = activeTab === tab;
+          const count = counts[tab];
+          return (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                isActive
+                  ? 'bg-[#163828] text-white shadow-xs'
+                  : 'bg-white border border-[#EBE6DD] text-stone-600 hover:bg-stone-50'
+              }`}
+            >
+              {tab} ({count})
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Search & Category Filter Row */}
+      <div className="flex flex-col sm:flex-row items-center gap-3">
+        <div className="relative flex-1 w-full">
+          <Search className="w-4 h-4 text-stone-400 absolute left-4 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search ingredients..."
+            className="w-full pl-11 pr-4 py-2 rounded-full border border-[#EBE6DD] bg-white text-xs sm:text-sm text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-[#163828]/20 focus:border-[#163828]"
+          />
+        </div>
+
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="px-4 py-2 rounded-full border border-[#EBE6DD] bg-white text-xs text-stone-800 focus:outline-none cursor-pointer w-full sm:w-auto"
+        >
+          <option value="All Categories">All Categories</option>
+          {CATEGORIES.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Inventory Items List / Table */}
+      <div className="bg-white rounded-3xl border border-[#EBE6DD] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.02)] divide-y divide-[#EBE6DD]">
+        {filteredItems.length === 0 ? (
+          <div className="p-12 text-center space-y-3">
+            <p className="text-sm font-semibold text-stone-700">No items found in this section.</p>
+            <button
+              onClick={handleOpenAdd}
+              className="text-xs font-bold text-[#163828] underline"
+            >
+              + Add an ingredient now
+            </button>
+          </div>
+        ) : (
+          filteredItems.map((item) => {
             const exp = getExpiryStatus(item.expiryDate);
+            const emoji = getIngredientEmoji(item.name);
+
+            const daysLeft = exp.daysRemaining ?? 30;
+            let badgeText = `Fresh (${daysLeft} days)`;
+            let badgeClass = 'bg-[#E8F8F5] text-[#27AE60]';
+
+            if (exp.daysRemaining === null) {
+              badgeText = 'No Expiry Set';
+              badgeClass = 'bg-stone-100 text-stone-600';
+            } else if (daysLeft <= 0) {
+              badgeText = 'Expires Today!';
+              badgeClass = 'bg-[#FFF3E0] text-[#E67E22]';
+            } else if (daysLeft === 1) {
+              badgeText = 'Expires in 1 day';
+              badgeClass = 'bg-[#FFF3E0] text-[#E67E22]';
+            } else if (daysLeft === 2) {
+              badgeText = 'Expires in 2 days';
+              badgeClass = 'bg-[#FFF3E0] text-[#E67E22]';
+            } else if (daysLeft <= 3) {
+              badgeText = `Expires in ${daysLeft} days`;
+              badgeClass = 'bg-[#FFF3E0] text-[#E67E22]';
+            }
 
             return (
               <div
                 key={item.id}
-                className="bg-white p-5 rounded-2xl border border-[#E2EBE5] shadow-xs hover:border-stone-300 transition-all flex flex-col justify-between space-y-4"
+                className="p-4 sm:px-6 flex items-center justify-between gap-4 hover:bg-[#FAF7F2]/50 transition-colors"
               >
-                <div className="space-y-2">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <h3 className="font-bold text-stone-800 text-base">{item.name}</h3>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-[#E7EFEA] text-[#1B4332]">
-                          {item.storageLocation}
-                        </span>
-                        <span className="text-[10px] text-stone-500">{item.category}</span>
-                      </div>
-                    </div>
-
-                    {/* Expiry Badge */}
-                    {item.expiryDate ? (
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap flex items-center gap-1 ${
-                          exp.status === 'expired'
-                            ? 'bg-rose-100 text-rose-800'
-                            : exp.status === 'expiring_soon'
-                            ? 'bg-amber-100 text-amber-800'
-                            : 'bg-emerald-100 text-emerald-800'
-                        }`}
-                      >
-                        <Clock className="w-2.5 h-2.5" />
-                        {exp.label}
-                      </span>
-                    ) : (
-                      <span className="text-[10px] text-stone-400">No expiry</span>
-                    )}
+                {/* Left: Emoji Icon, Name & Category */}
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-[#FAF7F2] border border-[#EBE6DD] flex items-center justify-center text-xl shrink-0">
+                    {emoji}
                   </div>
-
-                  {item.notes && (
-                    <p className="text-xs text-stone-500 italic line-clamp-1">{item.notes}</p>
-                  )}
+                  <div className="min-w-0">
+                    <h4 className="font-bold text-stone-900 text-sm truncate">{item.name}</h4>
+                    <p className="text-[11px] text-stone-500 font-medium">{item.category}</p>
+                  </div>
                 </div>
 
-                {/* Bottom Row: Quantity increment/decrement and edit/delete */}
-                <div className="pt-3 border-t border-stone-100 flex items-center justify-between">
-                  {/* Quantity Counter */}
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => handleQuantityAdjust(item, -1)}
-                      className="w-7 h-7 rounded-lg border border-stone-200 text-stone-700 flex items-center justify-center font-bold hover:bg-stone-100"
-                    >
-                      -
-                    </button>
-                    <span className="text-xs font-bold text-stone-800 font-mono">
+                {/* Right Group: Quantity, Expiry Badge, Actions */}
+                <div className="flex items-center gap-4 sm:gap-6 shrink-0">
+                  <div className="text-right">
+                    <span className="font-bold text-stone-900 text-xs sm:text-sm">
                       {item.quantity} {item.unit}
                     </span>
-                    <button
-                      onClick={() => handleQuantityAdjust(item, 1)}
-                      className="w-7 h-7 rounded-lg border border-stone-200 text-stone-700 flex items-center justify-center font-bold hover:bg-stone-100"
-                    >
-                      +
-                    </button>
                   </div>
 
-                  {/* Actions */}
-                  <div className="flex items-center gap-1">
+                  {/* Expiry Status Badge */}
+                  <div>
+                    <span
+                      className={`text-[11px] font-bold px-3 py-1 rounded-full whitespace-nowrap ${badgeClass}`}
+                    >
+                      {badgeText}
+                    </span>
+                  </div>
+
+                  {/* Edit & Delete Icons */}
+                  <div className="flex items-center gap-1 text-stone-400">
                     <button
                       onClick={() => handleOpenEdit(item)}
-                      className="p-1.5 text-stone-400 hover:text-stone-700 rounded-lg hover:bg-stone-100 transition-colors"
+                      className="p-1.5 hover:text-stone-700 hover:bg-stone-100 rounded-lg transition-colors"
                       title="Edit item"
                     >
-                      <Edit2 className="w-3.5 h-3.5" />
+                      <Pencil className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => onDeleteItem(item.id)}
-                      className="p-1.5 text-stone-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors"
+                      className="p-1.5 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                       title="Delete item"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -347,145 +345,123 @@ export const KitchenInventory: React.FC<KitchenInventoryProps> = ({
                 </div>
               </div>
             );
-          })}
-        </div>
-      )}
+          })
+        )}
+      </div>
 
       {/* Add / Edit Item Modal */}
-      {showAddModal && (
+      {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl border border-[#E2EBE5] p-6 max-w-md w-full space-y-5 shadow-xl">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-[#EBE6DD] space-y-4 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between pb-2 border-b border-stone-100">
-              <h3 className="font-bold text-stone-800 text-base">
-                {editingItem ? 'Edit Kitchen Item' : 'Add Ingredient to Kitchen'}
+              <h3 className="font-extrabold text-stone-900 text-lg">
+                {editingItem ? 'Edit Ingredient' : 'Add New Ingredient'}
               </h3>
               <button
-                onClick={() => setShowAddModal(false)}
-                className="text-stone-400 hover:text-stone-700 text-sm font-bold"
+                onClick={() => setIsModalOpen(false)}
+                className="text-stone-400 hover:text-stone-700 p-1 rounded-lg"
               >
-                &times;
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmitForm} className="space-y-4">
+            <form onSubmit={handleSaveItem} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-stone-700 mb-1">
-                  Ingredient Name *
+                <label className="block text-xs font-bold text-stone-700 mb-1">
+                  Ingredient Name
                 </label>
                 <input
                   type="text"
                   required
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
-                  placeholder="e.g. Greek Yogurt, Roma Tomatoes"
-                  className="w-full px-3 py-2 text-xs rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-[#1B4332]"
+                  placeholder="e.g. Baby Spinach, Roma Tomatoes"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#163828]/20 focus:border-[#163828]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-stone-700 mb-1">
-                    Category
-                  </label>
-                  <select
-                    value={formCategory}
-                    onChange={(e) => setFormCategory(e.target.value as IngredientCategory)}
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-stone-300 bg-white"
-                  >
-                    {CATEGORIES.map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-stone-700 mb-1">
-                    Storage Location
-                  </label>
-                  <select
-                    value={formLocation}
-                    onChange={(e) => setFormLocation(e.target.value as StorageLocation)}
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-stone-300 bg-white"
-                  >
-                    <option value="Fridge">Fridge</option>
-                    <option value="Pantry">Pantry</option>
-                    <option value="Freezer">Freezer</option>
-                    <option value="Spice Rack">Spice Rack</option>
-                    <option value="Countertop">Countertop</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-stone-700 mb-1">
-                    Quantity
-                  </label>
+                  <label className="block text-xs font-bold text-stone-700 mb-1">Quantity</label>
                   <input
                     type="number"
                     min="0.1"
                     step="any"
                     required
                     value={formQuantity}
-                    onChange={(e) => setFormQuantity(parseFloat(e.target.value) || 1)}
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-stone-300"
+                    onChange={(e) => setFormQuantity(Number(e.target.value))}
+                    className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#163828]/20"
                   />
                 </div>
-
                 <div>
-                  <label className="block text-xs font-semibold text-stone-700 mb-1">
-                    Unit
-                  </label>
+                  <label className="block text-xs font-bold text-stone-700 mb-1">Unit</label>
                   <input
                     type="text"
                     value={formUnit}
                     onChange={(e) => setFormUnit(e.target.value)}
-                    placeholder="g, ml, piece, can, etc."
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-stone-300"
+                    placeholder="g, piece, ml"
+                    className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#163828]/20"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-stone-700 mb-1">
-                  Expiry / Best-By Date (Optional)
-                </label>
-                <input
-                  type="date"
-                  value={formExpiryDate}
-                  onChange={(e) => setFormExpiryDate(e.target.value)}
-                  className="w-full px-3 py-2 text-xs rounded-xl border border-stone-300 bg-white"
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-stone-700 mb-1">Category</label>
+                  <select
+                    value={formCategory}
+                    onChange={(e) => setFormCategory(e.target.value as any)}
+                    className="w-full px-3 py-2 rounded-xl border border-stone-200 text-xs focus:outline-none"
+                  >
+                    {CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-stone-700 mb-1">Storage</label>
+                  <select
+                    value={formStorage}
+                    onChange={(e) => setFormStorage(e.target.value as any)}
+                    className="w-full px-3 py-2 rounded-xl border border-stone-200 text-xs focus:outline-none"
+                  >
+                    <option value="Fridge">Fridge</option>
+                    <option value="Pantry">Pantry</option>
+                    <option value="Freezer">Freezer</option>
+                    <option value="Countertop">Countertop</option>
+                  </select>
+                </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-stone-700 mb-1">
-                  Notes (Optional)
+                <label className="block text-xs font-bold text-stone-700 mb-1">
+                  Shelf Life Remaining: <span className="text-[#163828] font-extrabold">{formExpiryDays} days</span>
                 </label>
                 <input
-                  type="text"
-                  value={formNotes}
-                  onChange={(e) => setFormNotes(e.target.value)}
-                  placeholder="e.g. 'Crisp, bought from farmers market'"
-                  className="w-full px-3 py-2 text-xs rounded-xl border border-stone-300"
+                  type="range"
+                  min="1"
+                  max="60"
+                  value={formExpiryDays}
+                  onChange={(e) => setFormExpiryDays(Number(e.target.value))}
+                  className="w-full accent-[#163828]"
                 />
               </div>
 
-              <div className="flex items-center gap-3 pt-2">
+              <div className="pt-2 flex items-center justify-end gap-2">
                 <button
                   type="button"
-                  onClick={() => setShowAddModal(false)}
-                  className="flex-1 py-2.5 rounded-xl border border-stone-300 text-stone-700 text-xs font-semibold hover:bg-stone-50"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 rounded-full text-xs font-semibold text-stone-600 hover:bg-stone-100"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2.5 rounded-xl bg-[#1B4332] text-white text-xs font-semibold hover:bg-[#143628]"
+                  className="px-6 py-2 rounded-full bg-[#163828] text-white text-xs font-bold shadow-xs hover:bg-[#122D20]"
                 >
-                  {editingItem ? 'Save Changes' : 'Add Item'}
+                  Save Ingredient
                 </button>
               </div>
             </form>
