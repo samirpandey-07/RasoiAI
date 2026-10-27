@@ -48,7 +48,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 space-y-7 animate-in fade-in duration-200">
       {/* Greeting */}
       <div>
-        <p className="text-xs font-semibold text-stone-500">Good Morning, Samir!</p>
+        <p className="text-xs font-semibold text-stone-500">Good Morning, khushi!</p>
       </div>
 
       {/* Hero Banner Card */}

@@ -180,7 +180,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           <p className="flex items-center gap-1.5">
             &copy; {new Date().getFullYear()} <strong className="text-white">RasoiAI</strong>. Crafted with
             <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 inline mx-0.5" />
-            by <span className="text-amber-300 font-semibold">Samir Pandey</span>.
+            by <span className="text-amber-300 font-semibold">khushi</span>.
           </p>
 
           <div className="flex items-center gap-4 text-[11px] text-stone-400">
