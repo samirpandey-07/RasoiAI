@@ -49,30 +49,67 @@ export const IngredientScanner: React.FC<IngredientScannerProps> = ({ onScanComp
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Convert uploaded File to Base64
-  const handleFileChange = (file: File) => {
+  // Compress and resize image to fit Vercel payload limits and accelerate AI vision processing
+  const resizeImageFile = (
+    file: File,
+    maxDimension = 1600,
+    quality = 0.85
+  ): Promise<{ base64: string; mimeType: string }> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          let { width, height } = img;
+          if (width > maxDimension || height > maxDimension) {
+            if (width > height) {
+              height = Math.round((height * maxDimension) / width);
+              width = maxDimension;
+            } else {
+              width = Math.round((width * maxDimension) / height);
+              height = maxDimension;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            return resolve({ base64: e.target?.result as string, mimeType: file.type || 'image/jpeg' });
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+          resolve({ base64: compressedBase64, mimeType: 'image/jpeg' });
+        };
+        img.onerror = () => reject(new Error('Failed to load image for visual analysis.'));
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = () => reject(new Error('Failed to read file from device.'));
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Convert and optimize uploaded File to Base64
+  const handleFileChange = async (file: File) => {
     if (!file.type.startsWith('image/')) {
       setErrorMessage('Please upload a valid image file (JPEG, PNG, WebP).');
       return;
     }
 
-    if (file.size > 20 * 1024 * 1024) {
-      setErrorMessage('Image size exceeds 20MB limit. Please upload a smaller image.');
+    if (file.size > 25 * 1024 * 1024) {
+      setErrorMessage('Image size exceeds 25MB limit. Please upload a smaller image.');
       return;
     }
 
     setErrorMessage(null);
-    setMimeType(file.type);
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const base64 = e.target?.result as string;
+    try {
+      const { base64, mimeType: compressedMime } = await resizeImageFile(file);
       setSelectedImage(base64);
-    };
-    reader.onerror = () => {
-      setErrorMessage('Failed to read image file. Please try again.');
-    };
-    reader.readAsDataURL(file);
+      setMimeType(compressedMime);
+    } catch (err: any) {
+      setErrorMessage(err?.message || 'Failed to process image file.');
+    }
   };
 
   const handleDrop = (e: React.DragEvent) => {
